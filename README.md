@@ -646,31 +646,53 @@ interface IUserLinkSelectionsSchema {
 
 #### **Data Isolation Model**
 
-```mermaid
-graph TD
-    A[User Request] --> B[Authentication]
-    B --> C[Authorization]
-    C --> D[Data Access]
-    D --> E[OneDrive Data]
-    D --> F[SharePoint Data]
+```
+┌─────────────────────┐
+│    User Request     │
+│  (SharePoint Page)  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Authentication Layer│
+│(Microsoft 365 OAuth)│
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│Authorization Check  │
+│(Role & Permissions) │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Data Access Layer  │
+│(Service Factory)    │
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    ▼           ▼
+┌─────────┐ ┌─────────────┐
+│OneDrive │ │ SharePoint  │
+│Personal │ │   Global    │
+│ Data    │ │   Data      │
+│(JSON)   │ │  (Lists)    │
+└────┬────┘ └──────┬──────┘
+     │             │
+     ▼             ▼
+┌─────────┐ ┌─────────────┐
+│User's   │ │Site         │
+│OneDrive │ │Collection   │
+│Only     │ │Scope        │
+│(GDPR)   │ │(Admin)      │
+└─────────┘ └─────────────┘
 ```
 
-**Security Flow:**
-```
-User Request (SharePoint Page)
-       ↓
-Authentication Layer (Microsoft 365 OAuth)
-       ↓
-Authorization Check (Role & Permission Validation)
-       ↓
-Data Access Layer (Service Factory Pattern)
-   ↙               ↘
-OneDrive Personal     SharePoint Global
-Data (JSON Files)     Data (Site Lists)
-   ↓                     ↓
-User's OneDrive Only  Site Collection Scope
-(GDPR Compliant)      (Admin-Managed)
-```
+**🔒 Data Isolation Principles:**
+- **Personal Data**: Stored in user's OneDrive, no cross-user access
+- **Global Data**: Shared at site collection level with role-based access
+- **Authentication**: Microsoft 365 OAuth tokens for secure access
+- **Authorization**: SharePoint permission model enforcement
 
 #### **Access Control Principles**
 - **Least Privilege**: Users only access their own personal data
