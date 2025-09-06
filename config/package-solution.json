@@ -1,0 +1,64 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "Starter Kit - Collaboration Footer",
+    "id": "8b5fa72c-26f0-488a-a952-6ec68c81f623",
+    "version": "8.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "PnP Starter Kit",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "websiteUrl": "",
+      "mpnId": "pnpsk"
+    },
+    "webApiPermissionRequests": [
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Files.ReadWrite"
+      },
+      {
+        "resource": "Microsoft Graph", 
+        "scope": "User.Read"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Sites.Read.All"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "TermStore.Read.All"
+      }
+    ],
+    "metadata": {
+      "shortDescription": {
+        "default": "Modern collaboration footer with hybrid OneDrive and SharePoint storage"
+      },
+      "longDescription": {
+        "default": "A high-performance SharePoint Framework application customizer that provides a modern, flexible footer with enterprise-grade optimizations. Features hybrid architecture with OneDrive JSON storage for personal links and SharePoint Lists for global links with mandatory/optional flags. Version 8.0 includes lazy loading, enhanced error boundaries, optimized TypeScript implementation, and comprehensive performance improvements."
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": ["Productivity", "Collaboration"]
+    },
+    "features": [
+      {
+        "title": "Application Extension - Deployment of custom action.",
+        "description": "Deploys a custom action with ClientSideComponentId association",
+        "id": "d92e00dd-d103-482a-837f-d5728af1fec6",
+        "version": "3.0.0.0",
+        "assets": {
+          "elementManifests": [
+            "elements.xml",
+            "clientsideinstance.xml"
+          ]
+        }
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/react-application-collab-footer.sppkg"
+  }
+}

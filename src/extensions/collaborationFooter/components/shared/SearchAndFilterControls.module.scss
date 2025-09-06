@@ -1,0 +1,178 @@
+@import '~@fluentui/react/dist/sass/References.scss';
+
+// Modern search and filter controls styling
+.filterControls {
+  // Global SearchBox styling
+  :global(.ms-SearchBox) {
+    :global(.ms-SearchBox-field) {
+      // background: #f8f9fa !important;
+      // border: none !important;
+      // border-radius: 12px !important;
+      // font-size: 14px !important;
+      // padding: 0 16px !important;
+      // height: 40px !important;
+      // min-height: 40px !important;
+      // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+      // transition: all 0.2s ease-in-out !important;
+      
+      &:hover {
+        background: #ffffff !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+        transform: translateY(-1px) !important;
+      }
+      
+      &:focus {
+        background: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1), 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+        outline: none !important;
+      }
+    }
+    
+    :global(.ms-SearchBox-iconContainer) {
+      color: #6c757d !important;
+      font-size: 16px !important;
+    }
+    
+    :global(.ms-SearchBox-clearButton) {
+      color: #6c757d !important;
+      border-radius: 8px !important;
+      
+      &:hover {
+        color: #0078d4 !important;
+        background: rgba(0, 120, 212, 0.1) !important;
+      }
+    }
+  }
+
+  // Global Dropdown styling
+  :global(.ms-Dropdown) {
+    :global(.ms-Dropdown-container) {
+      height: 40px !important;
+      
+      :global(.ms-Dropdown-title) {
+        background: #f8f9fa !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-size: 14px !important;
+        padding: 0 16px !important;
+        line-height: 40px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+        transition: all 0.2s ease-in-out !important;
+        color: #424242 !important;
+        
+        &:hover {
+          background: #ffffff !important;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+          transform: translateY(-1px) !important;
+        }
+        
+        &:focus {
+          background: #ffffff !important;
+          box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1), 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+          outline: none !important;
+        }
+      }
+      
+      :global(.ms-Dropdown-caretDownWrapper) {
+        color: #6c757d !important;
+        right: 16px !important;
+      }
+    }
+    
+    :global(.ms-Dropdown-callout) {
+      border: none !important;
+      border-radius: 12px !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+      overflow: hidden !important;
+      
+      :global(.ms-Dropdown-items) {
+        :global(.ms-Dropdown-item) {
+          padding: 12px 16px !important;
+          font-size: 14px !important;
+          transition: all 0.15s ease-in-out !important;
+          
+          &:hover {
+            background: #f8f9fa !important;
+            color: #0078d4 !important;
+          }
+          
+          &:global(.is-selected) {
+            background: rgba(0, 120, 212, 0.1) !important;
+            color: #0078d4 !important;
+            font-weight: 600 !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media screen and (max-width: 768px) {
+  .filterControls {
+    :global(.ms-SearchBox) {
+      :global(.ms-SearchBox-field) {
+        font-size: 16px !important; // Prevent zoom on iOS
+        min-width: 280px !important;
+      }
+    }
+    
+    :global(.ms-Dropdown) {
+      :global(.ms-Dropdown-container) {
+        min-width: 180px !important;
+        
+        :global(.ms-Dropdown-title) {
+          font-size: 16px !important; // Prevent zoom on iOS
+        }
+      }
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .filterControls {
+    :global(.ms-SearchBox) {
+      :global(.ms-SearchBox-field) {
+        background: $ms-color-white !important;
+        border: 2px solid $ms-color-neutralPrimary !important;
+        
+        &:focus {
+          border-color: $ms-color-themePrimary !important;
+          box-shadow: none !important;
+        }
+      }
+    }
+    
+    :global(.ms-Dropdown) {
+      :global(.ms-Dropdown-container) {
+        :global(.ms-Dropdown-title) {
+          background: $ms-color-white !important;
+          border: 2px solid $ms-color-neutralPrimary !important;
+          
+          &:focus {
+            border-color: $ms-color-themePrimary !important;
+            box-shadow: none !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .filterControls {
+    :global(.ms-SearchBox),
+    :global(.ms-Dropdown) {
+      * {
+        transition: none !important;
+        transform: none !important;
+        animation: none !important;
+      }
+    }
+  }
+}

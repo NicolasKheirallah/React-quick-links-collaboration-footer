@@ -1,0 +1,43 @@
+
+require("./ModernCollabFooter.module.css");
+const styles = {
+  modernFooter: 'modernFooter_bb915c38',
+  slideInFromBottom: 'slideInFromBottom_bb915c38',
+  footerContainer: 'footerContainer_bb915c38',
+  footerLayout: 'footerLayout_bb915c38',
+  linksSection: 'linksSection_bb915c38',
+  actionsSection: 'actionsSection_bb915c38',
+  compactActions: 'compactActions_bb915c38',
+  compactButton: 'compactButton_bb915c38',
+  bannerSmall: 'bannerSmall_bb915c38',
+  buttonIcon: 'buttonIcon_bb915c38',
+  linkPill: 'linkPill_bb915c38',
+  linkItem: 'linkItem_bb915c38',
+  searchBox: 'searchBox_bb915c38',
+  searchArea: 'searchArea_bb915c38',
+  searchResults: 'searchResults_bb915c38',
+  bannerLarge: 'bannerLarge_bb915c38',
+  notificationBar: 'notificationBar_bb915c38',
+  contentArea: 'contentArea_bb915c38',
+  linksContainer: 'linksContainer_bb915c38',
+  linkIcon: 'linkIcon_bb915c38',
+  linkBadge: 'linkBadge_bb915c38',
+  new: 'new_bb915c38',
+  updated: 'updated_bb915c38',
+  popular: 'popular_bb915c38',
+  urgent: 'urgent_bb915c38',
+  pulse: 'pulse_bb915c38',
+  pillSquare: 'pillSquare_bb915c38',
+  pillMinimal: 'pillMinimal_bb915c38',
+  pillRounded: 'pillRounded_bb915c38',
+  densityCompact: 'densityCompact_bb915c38',
+  densitySpacious: 'densitySpacious_bb915c38',
+  categoryDropdowns: 'categoryDropdowns_bb915c38',
+  categoryGroup: 'categoryGroup_bb915c38',
+  categoryLabel: 'categoryLabel_bb915c38',
+  categoryLinks: 'categoryLinks_bb915c38',
+  showMoreIndicator: 'showMoreIndicator_bb915c38',
+  dropdownContainer: 'dropdownContainer_bb915c38'
+};
+
+export default styles;

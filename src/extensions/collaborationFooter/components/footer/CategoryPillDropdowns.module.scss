@@ -1,0 +1,36 @@
+
+.categoryPillDropdowns {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+}
+
+.pillsContainer {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  overflow: visible;
+  
+  // Ensure pills use available space efficiently
+  > * {
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .categoryPillDropdowns {
+    padding: 6px 12px;
+  }
+  
+  .pillsContainer {
+    gap: 8px;
+  }
+}
