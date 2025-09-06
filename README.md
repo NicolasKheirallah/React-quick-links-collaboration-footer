@@ -1,4 +1,4 @@
-# 🚀 Quick Links Collaboration Footer v8.0.0
+# 🚀 Quick Links Collaboration Footer v8.1.0
 
 [![SPFx](https://img.shields.io/badge/SPFx-1.21.1-green.svg)](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/sharepoint-framework-overview)
 [![React](https://img.shields.io/badge/React-17-blue.svg)](https://reactjs.org/)
@@ -902,7 +902,8 @@ Add-PnPSiteCollectionAdmin -Owners "user@contoso.com"
 
 | Version | Release Date | Key Features | Breaking Changes |
 |---------|--------------|---------------|------------------|
-| **8.0.0** | **August 2025** | **🚀 Performance optimization, enhanced error handling, TypeScript improvements** | None |
+| **8.1.0** | **September 2025** | **Look and feel, translations, etc etc** | None |
+| **8.0.0** | **August 2025** | **Performance optimization, enhanced error handling, TypeScript improvements** | None |
 | **7.1.0** | August 2025 | Personal links parity, banner sizing, bulk operations | None |
 | **7.0.0** | August 2025 | Organization links fix, complete visibility system | None |
 | **6.1.0** | August 2025 | Modern admin dashboard, real SharePoint API | None |
