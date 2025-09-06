@@ -35,6 +35,8 @@
 
 The **Quick Links Collaboration Footer** is a modern SharePoint Framework (SPFx) application customizer designed to enhance team productivity through intelligent link management and seamless user experience. Built with enterprise-grade architecture, it combines the power of Microsoft Graph API with SharePoint Lists to deliver optimal performance and flexibility.
 
+This is based on the old React-Application-Collab-Footer but has more or less been rewritten from the ground up
+
 ### 🌟 Why Choose Quick Links Collaboration Footer?
 
 - **🚀 Performance-First**: Lazy loading, optimized rendering, and minimal bundle size
@@ -75,37 +77,6 @@ The **Quick Links Collaboration Footer** is a modern SharePoint Framework (SPFx)
 - **Banner Sizing System**: Small/Medium/Large options with responsive scaling
 - **Analytics Dashboard**: Usage tracking and insights (v8.1 roadmap)
 - **Bulk Import/Export**: CSV operations for large-scale deployments
-
----
-
-## 🚀 What's New in v8.0.0
-
-### 🚀 **Enterprise-Grade Performance Optimizations**
-- **Lazy Loading Components**: Admin panels load on-demand (-30KB initial bundle)
-- **Enhanced Memoization**: React.memo patterns prevent unnecessary re-renders
-- **Import Tree Shaking**: Optimized imports reduce bundle size by ~45KB
-- **Performance Monitoring**: Built-in telemetry and optimization tracking
-- **Memory Management**: Enhanced garbage collection and cleanup patterns
-
-### 🛡️ **Advanced Error Handling & Resilience**
-- **ErrorBoundary Components**: Retry functionality with maximum 3 attempts
-- **Graceful Degradation**: Components continue working when sub-components fail
-- **Development Debugging**: Detailed error info and component stack traces
-- **Custom Error Recovery**: Configurable fallbacks and user-friendly messages
-- **Performance Telemetry**: Real-time monitoring and optimization insights
-
-### 🔧 **Code Quality & Type Safety**
-- **Zero `any` Types**: Complete TypeScript type safety with proper interfaces
-- **Centralized Constants**: All magic numbers replaced with typed constants in `ApplicationConstants.ts`
-- **Shared Style System**: Reusable SCSS utilities in `SharedStyles.module.scss`
-- **Enhanced Validation**: Robust input validation with type guards in `ValidationUtils.ts`
-- **Modern React Patterns**: Hooks optimization with proper dependency management
-
-### 🎨 **Modern Development Architecture**
-- **React Suspense**: Elegant loading states for lazy-loaded components
-- **Higher-Order Components**: `withErrorBoundary` HOC for consistent error handling
-- **Responsive Breakpoints**: Mobile-first approach with SCSS mixins
-- **Component Composition**: Reusable UI components with shared interfaces
 
 ---
 
@@ -211,7 +182,7 @@ npm run dev
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `storageType` | `string` | `"hybrid"` | Architecture: `hybrid`, `sharepoint-lists`, `legacy-taxonomy`, `graph` |
+| `storageType` | `string` | `"hybrid"` | Architecture: `hybrid`, `sharepoint-lists`, `legacy-taxonomy` |
 | `sharedLinksListTitle` | `string` | `"Global Footer Links"` | SharePoint list name for global links |
 | `personalLinksListTitle` | `string` | `"Footer Personal Links"` | SharePoint list name (legacy mode only) |
 | `autoCreateLists` | `boolean` | `true` | Automatically create required SharePoint lists |
@@ -419,30 +390,6 @@ interface IUserLinkSelectionsSchema {
 | **Mobile Safari** | 14+ | ✅ Full Support |
 | **Chrome Mobile** | 90+ | ✅ Full Support |
 
-### **Technology Stack**
-```
-🏗️ Frontend Architecture
-├── ⚛️ React 17.0.2
-│   ├── Functional components with hooks
-│   ├── React.memo for performance optimization
-│   └── React.Suspense for lazy loading
-├── 🎨 Fluent UI v8
-│   ├── SharePoint design language compliance
-│   ├── Accessibility built-in
-│   └── Theme integration
-├── 📘 TypeScript 5.3+
-│   ├── 100% type coverage
-│   ├── Strict mode enabled
-│   └── Advanced type guards
-├── 🎯 SharePoint Framework 1.21.1
-│   ├── Modern SPFx patterns
-│   ├── Microsoft Graph integration
-│   └── SharePoint REST API
-└── 🛠️ Build Tools
-    ├── Webpack 5 with optimization
-    ├── Gulp 4 task automation
-    └── ESLint + Prettier code quality
-```
 
 ### **Architecture Patterns**
 - **Service Layer Pattern**: Abstracted data access with dependency injection
@@ -686,13 +633,6 @@ src/extensions/collaborationFooter/
 
 ### **🔮 Future Enhancements**
 
-#### **v8.2.0 - Enterprise Features**
-- [ ] **Advanced Audience Targeting**
-  - Azure AD group integration
-  - Dynamic audience rules
-  - Time-based link availability
-  - Geographic targeting support
-
 #### **v8.3.0 - Collaboration Features**
 - [ ] **Real-time Collaboration**
   - Live link sharing between users
@@ -706,10 +646,6 @@ src/extensions/collaborationFooter/
   - Auto-categorization using AI
   - Smart search with natural language
   - Usage pattern predictions
-
-#### **Enterprise Roadmap**
-- [ ] **Multi-tenant Support**
-- [ ] **Advanced Compliance Features**
 
 ---
 
@@ -786,58 +722,3 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - React: MIT License
 - Fluent UI: MIT License
 - PnP JS: MIT License
-
----
-
-## 🙏 Acknowledgments
-
-### **Core Contributors**
-- **Paolo Pialorsi** - Original implementation and architecture
-- **David Opdendries** - UI/UX enhancements and modern design
-- **Chandani Prajapati** - Testing and quality assurance
-- **Nicolas Kheirallah** - Modernization, hybrid architecture, and v8.0 performance optimization
-
-### **Community Contributors**
-- SharePoint PnP Community for feedback and testing
-- Microsoft SharePoint Engineering for platform support
-- Open source contributors for bug reports and feature requests
-
-### **Technology Partners**
-- **Microsoft** - SharePoint Framework, Graph API, and Fluent UI
-- **React Team** - React library and development tools
-- **TypeScript Team** - Type safety and developer experience
-- **Community** - PnP libraries and SharePoint community tools
-
----
-
-## 📊 Project Statistics
-
-### **Development Metrics**
-- **Total Commits**: 500+ across all versions
-- **Contributors**: 15+ community contributors
-- **Issues Resolved**: 200+ GitHub issues closed
-- **Downloads**: 10,000+ deployments worldwide
-- **Test Coverage**: 85% unit tests, 70% integration tests
-
-### **Performance Benchmarks**
-- **Bundle Size**: 85KB (optimized from 130KB)
-- **Load Time**: <200ms average
-- **Memory Usage**: <2MB runtime
-- **Lighthouse Score**: 95+ Performance
-- **Accessibility Score**: 100/100
-
----
-
-<div align="center">
-
-### **Ready to enhance your SharePoint collaboration?**
-
-[🚀 **Get Started**](#-installation--setup) | [📖 **Documentation**](../../wiki) | [💬 **Community**](../../discussions) | [🐛 **Report Issues**](../../issues)
-
----
-
-**Built with ❤️ by the SharePoint community**
-
-<img src="https://telemetry.sharepointpnp.com/sp-starter-kit/source/react-application-collab-footer" />
-
-</div>
