@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Log } from '@microsoft/sp-core-library';
-import * as strings from '../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { spfi, SPFx } from '@pnp/sp';
 import '@pnp/sp/webs';
 import '@pnp/sp/lists';

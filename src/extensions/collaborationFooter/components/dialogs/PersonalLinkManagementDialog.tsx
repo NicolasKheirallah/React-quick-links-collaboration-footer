@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Log } from '@microsoft/sp-core-library';
-import * as strings from '../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import {
   DefaultButton,
   PrimaryButton,

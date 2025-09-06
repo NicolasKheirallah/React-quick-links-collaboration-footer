@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, Suspense, useCallback, useEffect, useRef } from 'react';
-import * as strings from '../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';

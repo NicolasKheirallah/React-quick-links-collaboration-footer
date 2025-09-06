@@ -711,6 +711,16 @@
   }
 
   &.densityNormal .linkItem {
+    /* Default normal density (default styling already applied via base .linkItem) */
+    padding: 3px 8px;
+    font-size: 11px;
+    margin: 0 2px;
+    height: 22px;
+    
+    .linkIcon {
+      font-size: 10px;
+      margin-right: 3px;
+    }
   }
 
   &.categoryDropdowns {
@@ -757,6 +767,25 @@
   justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+/* Icon size classes */
+.iconSizeSmall .linkIcon,
+.iconSizeSmall .icon,
+.iconSizeSmall .pillIcon {
+  font-size: 12px !important;
+}
+
+.iconSizeMedium .linkIcon,
+.iconSizeMedium .icon,
+.iconSizeMedium .pillIcon {
+  font-size: 16px !important;
+}
+
+.iconSizeLarge .linkIcon,
+.iconSizeLarge .icon,
+.iconSizeLarge .pillIcon {
+  font-size: 20px !important;
   padding: 4px 0;
 
   :global(.ms-Dropdown) {

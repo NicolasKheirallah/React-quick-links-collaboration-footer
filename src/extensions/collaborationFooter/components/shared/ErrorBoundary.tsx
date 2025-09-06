@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Component, ReactNode } from 'react';
 import { Log } from '@microsoft/sp-core-library';
-import * as strings from '../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { DefaultButton } from '@fluentui/react/lib/Button';
 

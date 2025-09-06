@@ -48,17 +48,17 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
 
   const getDensityClass = () => {
     switch (userSettings.density) {
-      case Density.Compact: return 'densityCompact';
-      case Density.Spacious: return 'densitySpacious';
-      default: return 'densityNormal';
+      case Density.Compact: return styles.densityCompact;
+      case Density.Spacious: return styles.densitySpacious;
+      default: return styles.densityNormal;
     }
   };
 
   const getPillStyleClass = () => {
     switch (userSettings.pillStyle) {
-      case PillStyle.Square: return 'pillSquare';
-      case PillStyle.Minimal: return 'pillMinimal';
-      default: return 'pillRounded';
+      case PillStyle.Square: return styles.pillSquare;
+      case PillStyle.Minimal: return styles.pillMinimal;
+      default: return styles.pillRounded;
     }
   };
 
@@ -67,6 +67,14 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
       case 'small': return '12px';
       case 'large': return '20px';
       default: return '16px';
+    }
+  };
+
+  const getIconSizeClass = () => {
+    switch (userSettings.iconSize) {
+      case 'small': return styles.iconSizeSmall;
+      case 'large': return styles.iconSizeLarge;
+      default: return styles.iconSizeMedium;
     }
   };
 
@@ -90,7 +98,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
   if (userSettings.displayMode === DisplayMode.TypeBasedDropdowns) {
     return (
       <div className={styles.contentArea}>
-        <div className={`${styles.linksContainer} ${getDensityClass()} ${getPillStyleClass()}`}>
+        <div className={`${styles.linksContainer} ${getDensityClass()} ${getPillStyleClass()} ${getIconSizeClass()}`}>
           <CategoryPillDropdowns
             organizationLinks={organizationLinks}
             personalLinks={personalLinks}
@@ -108,7 +116,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
   if (userSettings.displayMode === DisplayMode.CategoryDropdowns) {
     return (
       <div className={styles.contentArea}>
-        <div className={`${styles.linksContainer} ${getDensityClass()} ${getPillStyleClass()}`}>
+        <div className={`${styles.linksContainer} ${getDensityClass()} ${getPillStyleClass()} ${getIconSizeClass()}`}>
           <CategoryPillDropdowns
             organizationLinks={organizationLinks}
             personalLinks={personalLinks}
@@ -126,7 +134,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
   if (userSettings.displayMode === DisplayMode.OrgPersonalDropdowns) {
     return (
       <div className={styles.contentArea}>
-        <div className={`${styles.linksContainer} ${getDensityClass()} ${getPillStyleClass()}`}>
+        <div className={`${styles.linksContainer} ${getDensityClass()} ${getPillStyleClass()} ${getIconSizeClass()}`}>
           <CategoryPillDropdowns
             organizationLinks={organizationLinks}
             personalLinks={personalLinks}
@@ -143,7 +151,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
 
   return (
     <div className={styles.contentArea}>
-      <div className={`${styles.linksContainer} ${getDensityClass()}`}>
+      <div className={`${styles.linksContainer} ${getDensityClass()} ${getIconSizeClass()}`}>
         {visibleLinks.length > 0 ? (
           <>
             {visibleLinks.map((link, index) => (

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SearchBox } from '@fluentui/react/lib/SearchBox';
-import * as strings from '../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { Stack } from '@fluentui/react/lib/Stack';
 import styles from './SearchAndFilterControls.module.scss';

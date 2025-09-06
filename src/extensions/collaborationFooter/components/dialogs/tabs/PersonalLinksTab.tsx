@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as strings from '../../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/Button';
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { SearchAndFilterControls } from '../../shared/SearchAndFilterControls';

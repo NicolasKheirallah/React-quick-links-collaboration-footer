@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as strings from '../../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { UserSettingsPanel } from '../../settings/UserSettingsPanel';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
 import { IUserSettings } from '../../../types/UserSettings';

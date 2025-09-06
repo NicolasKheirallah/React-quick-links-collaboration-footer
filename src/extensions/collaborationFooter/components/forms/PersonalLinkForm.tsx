@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { BaseLinkForm, IBaseLinkFormData } from './BaseLinkForm';
-import * as strings from '../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 
 export interface IPersonalLinkFormData extends IBaseLinkFormData {}
 

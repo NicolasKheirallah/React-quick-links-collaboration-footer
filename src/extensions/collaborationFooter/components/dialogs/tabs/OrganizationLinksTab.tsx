@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as strings from '../../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { WebPartContext } from '@microsoft/sp-webpart-base';

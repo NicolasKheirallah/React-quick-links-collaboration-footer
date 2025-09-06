@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as strings from '../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { memo } from 'react';
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { Icon } from '@fluentui/react/lib/Icon';

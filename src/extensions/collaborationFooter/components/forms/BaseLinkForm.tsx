@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { LinkValidationService } from '../../../../services/utilities/linkValidationService';
-import * as strings from '../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { Dropdown } from '@fluentui/react/lib/Dropdown';
 import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/Button';

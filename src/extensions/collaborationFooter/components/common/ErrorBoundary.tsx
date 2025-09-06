@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Log } from '@microsoft/sp-core-library';
-import * as strings from '../../loc/myStrings';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { Stack } from '@fluentui/react/lib/Stack';
