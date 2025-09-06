@@ -1,0 +1,211 @@
+// Theme variables for Collaboration Footer
+// Colors - SharePoint theme compliant
+:root {
+  // Primary theme colors
+  --cf-color-primary: #0078d4;
+  --cf-color-primary-light: #106ebe;
+  --cf-color-primary-lighter: #deecf9;
+  --cf-color-primary-lightest: #eff6fc;
+  
+  // Neutral colors
+  --cf-color-neutral-dark: #201f1e;
+  --cf-color-neutral-primary: #323130;
+  --cf-color-neutral-secondary: #605e5c;
+  --cf-color-neutral-tertiary: #a19f9d;
+  --cf-color-neutral-tertiary-alt: #c8c6c4;
+  --cf-color-neutral-quaternary: #d0d0d0;
+  --cf-color-neutral-light: #edebe9;
+  --cf-color-neutral-lighter: #f3f2f1;
+  --cf-color-neutral-lighter-alt: #faf9f8;
+  
+  // Semantic colors
+  --cf-color-white: #ffffff;
+  --cf-color-black: #000000;
+  --cf-color-red: #d13438;
+  --cf-color-red-light: #f3f2f1;
+  --cf-color-green: #107c10;
+  --cf-color-orange: #ff8c00;
+  
+  // Background colors
+  --cf-color-bg-primary: var(--cf-color-white);
+  --cf-color-bg-secondary: var(--cf-color-neutral-lighter-alt);
+  --cf-color-bg-tertiary: var(--cf-color-neutral-lighter);
+  --cf-color-bg-hover: var(--cf-color-neutral-lighter);
+  --cf-color-bg-selected: var(--cf-color-primary-lightest);
+  --cf-color-bg-error: var(--cf-color-red-light);
+  
+  // Border colors
+  --cf-color-border-default: var(--cf-color-neutral-light);
+  --cf-color-border-hover: var(--cf-color-neutral-quaternary);
+  --cf-color-border-focus: var(--cf-color-primary);
+  --cf-color-border-selected: var(--cf-color-primary);
+  --cf-color-border-error: var(--cf-color-red);
+  
+  // Text colors
+  --cf-color-text-primary: var(--cf-color-neutral-primary);
+  --cf-color-text-secondary: var(--cf-color-neutral-secondary);
+  --cf-color-text-tertiary: var(--cf-color-neutral-tertiary);
+  --cf-color-text-white: var(--cf-color-white);
+  --cf-color-text-error: var(--cf-color-red);
+  --cf-color-text-success: var(--cf-color-green);
+  --cf-color-text-warning: var(--cf-color-orange);
+  
+  // Typography
+  --cf-font-size-small: 12px;
+  --cf-font-size-medium: 14px;
+  --cf-font-size-large: 16px;
+  --cf-font-size-xl: 18px;
+  --cf-font-size-xxl: 20px;
+  --cf-font-size-xxxl: 24px;
+  
+  --cf-font-weight-normal: 400;
+  --cf-font-weight-semibold: 600;
+  --cf-font-weight-bold: 700;
+  
+  --cf-line-height-small: 16px;
+  --cf-line-height-medium: 20px;
+  --cf-line-height-large: 22px;
+  --cf-line-height-xl: 24px;
+  
+  // Spacing
+  --cf-spacing-xs: 4px;
+  --cf-spacing-s: 8px;
+  --cf-spacing-m: 12px;
+  --cf-spacing-l: 16px;
+  --cf-spacing-xl: 20px;
+  --cf-spacing-xxl: 24px;
+  --cf-spacing-xxxl: 32px;
+  --cf-spacing-huge: 40px;
+  
+  // Border radius
+  --cf-border-radius-s: 2px;
+  --cf-border-radius-m: 4px;
+  --cf-border-radius-l: 6px;
+  --cf-border-radius-xl: 8px;
+  --cf-border-radius-round: 50%;
+  
+  // Shadows
+  --cf-shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --cf-shadow-medium: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --cf-shadow-heavy: 0 4px 16px rgba(0, 0, 0, 0.2);
+  --cf-shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  // Z-index layers
+  --cf-z-base: 0;
+  --cf-z-dropdown: 100;
+  --cf-z-notification: 102;
+  --cf-z-modal: 1000;
+  --cf-z-modal-backdrop: 999;
+  --cf-z-tooltip: 2000;
+  --cf-z-flyout: 12000;
+  --cf-z-flyout-content: 12001;
+  
+  // Transitions
+  --cf-transition-fast: 0.1s ease;
+  --cf-transition-normal: 0.2s ease;
+  --cf-transition-slow: 0.3s ease;
+  
+  // Component specific sizes
+  --cf-icon-size-small: 16px;
+  --cf-icon-size-medium: 20px;
+  --cf-icon-size-large: 24px;
+  
+  --cf-pill-height-small: 28px;
+  --cf-pill-height-medium: 32px;
+  --cf-pill-height-large: 36px;
+  
+  --cf-bar-height-small: 40px;
+  --cf-bar-height-medium: 48px;
+  --cf-bar-height-large: 56px;
+  
+  --cf-button-height-small: 24px;
+  --cf-button-height-medium: 32px;
+  --cf-button-height-large: 40px;
+  
+  // Layout
+  --cf-max-width-dialog: 500px;
+  --cf-max-width-modal: 800px;
+  --cf-max-width-panel: 320px;
+  
+  // Animations
+  --cf-animation-slide-in: slideInRight 0.3s ease;
+  --cf-animation-fade-in: fadeIn 0.2s ease;
+  --cf-animation-scale-in: scaleIn 0.2s ease;
+}
+
+// Keyframes for animations
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Utility classes
+.cfTextPrimary {
+  color: var(--cf-color-text-primary);
+}
+
+.cfTextSecondary {
+  color: var(--cf-color-text-secondary);
+}
+
+.cfTextTertiary {
+  color: var(--cf-color-text-tertiary);
+}
+
+.cfTextError {
+  color: var(--cf-color-text-error);
+}
+
+.cfBgWhite {
+  background-color: var(--cf-color-bg-primary);
+}
+
+.cfBgLight {
+  background-color: var(--cf-color-bg-secondary);
+}
+
+.cfBorderDefault {
+  border: 1px solid var(--cf-color-border-default);
+}
+
+.cfBorderRadius {
+  border-radius: var(--cf-border-radius-m);
+}
+
+.cfShadowLight {
+  box-shadow: var(--cf-shadow-light);
+}
+
+.cfShadowMedium {
+  box-shadow: var(--cf-shadow-medium);
+}
+
+.cfTransition {
+  transition: var(--cf-transition-normal);
+}

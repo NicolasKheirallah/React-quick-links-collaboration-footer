@@ -285,22 +285,24 @@
 // Enhanced modern search box styles
 :global(.ms-SearchBox) {
   :global(.ms-SearchBox-field) {
-    // background: #f8f9fa !important;
-    // border: none !important;
-    // border-radius: 12px !important;
-    // font-size: 14px !important;
-    // padding: 0 16px !important;
-    // height: 40px !important;
-    // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-    // transition: all 0.2s ease-in-out !important;
+    border: none !important;
+    background: #f8f9fa !important;
+    border-radius: 12px !important;
+    font-size: 14px !important;
+    padding: 0 16px !important;
+    height: 40px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s ease-in-out !important;
     
     &:hover {
+      border: none !important;
       background: #ffffff !important;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
       transform: translateY(-1px) !important;
     }
     
     &:focus {
+      border: none !important;
       background: #ffffff !important;
       box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1), 0 4px 16px rgba(0, 0, 0, 0.12) !important;
       outline: none !important;

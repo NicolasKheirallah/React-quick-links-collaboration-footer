@@ -1,28 +1,35 @@
 @import '~@fluentui/react/dist/sass/References.scss';
+@import '../../styles/theme.module.scss';
 
 :root {
-  --footer-bg-primary: linear-gradient(135deg, #fafafa 0%, #f8f9fa 100%);
-  --footer-border: #{$ms-color-neutralQuaternaryAlt};
-  --footer-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  // Footer specific variables that extend theme variables
+  --footer-bg-primary: linear-gradient(135deg, var(--cf-color-bg-secondary) 0%, var(--cf-color-bg-tertiary) 100%);
+  --footer-border: var(--cf-color-border-default);
+  --footer-shadow: var(--cf-shadow-medium);
   --button-bg: rgba(255, 255, 255, 0.9);
-  --button-bg-hover: rgba(255, 255, 255, 1);
-  --button-border: rgba(0, 0, 0, 0.1);
-  --button-color: #{$ms-color-themePrimary};
-  --button-shadow-hover: 0 2px 8px rgba(0, 120, 212, 0.2);
+  --button-bg-hover: var(--cf-color-bg-primary);
+  --button-border: var(--cf-color-border-default);
+  --button-color: var(--cf-color-primary);
+  --button-shadow-hover: var(--cf-shadow-medium);
   --link-bg: rgba(255, 255, 255, 0.85);
-  --link-bg-hover: rgba(255, 255, 255, 1);
-  --link-border: rgba(0, 0, 0, 0.08);
-  --link-color: #{$ms-color-neutralPrimary};
-  --link-color-hover: #{$ms-color-themeDark};
-  --link-shadow-hover: 0 2px 6px rgba(0, 120, 212, 0.15);
+  --link-bg-hover: var(--cf-color-bg-primary);
+  --link-border: var(--cf-color-border-default);
+  --link-color: var(--cf-color-text-primary);
+  --link-color-hover: var(--cf-color-primary-light);
+  --link-shadow-hover: var(--cf-shadow-light);
   --footer-max-width: 1200px;
-  --border-radius: 10px;
-  --border-radius-small: 6px;
-  --transition: all 0.2s ease;
-  --z-footer: 99;
-  --z-search: 101;
-  --z-notification: 102;
-  --z-modal: 1000;
+  --border-radius: var(--cf-border-radius-l);
+  --border-radius-small: var(--cf-border-radius-m);
+  --transition: var(--cf-transition-normal);
+}
+
+// Global SearchBox border removal
+:global(.ms-SearchBox) {
+  border: none !important;
+  
+  :global(.ms-SearchBox-field) {
+    border: none !important;
+  }
 }
 
 @mixin button-base {
@@ -155,7 +162,7 @@
   background: var(--footer-bg-primary);
   border-top: 1px solid var(--footer-border);
   box-shadow: var(--footer-shadow);
-  z-index: var(--z-footer);
+  z-index: var(--cf-z-base);
   animation: slideInFromBottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   box-sizing: border-box;
   overflow-x: hidden;
@@ -371,7 +378,7 @@
 .notificationBar {
   margin-bottom: 6px;
   position: relative;
-  z-index: var(--z-notification);
+  z-index: var(--cf-z-notification);
   
   :global(.ms-MessageBar) {
     border-radius: var(--border-radius-small);
@@ -547,7 +554,7 @@
   padding: 8px 12px;
   margin-bottom: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  z-index: var(--z-search);
+  z-index: var(--cf-z-dropdown);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   max-width: 100%;
@@ -568,28 +575,31 @@
   :global(.ms-SearchBox) {
     width: 100% !important;
     max-width: 100% !important;
+    border: none !important;
   }
   
   :global(.ms-SearchBox-field) {
-    // background: #f8f9fa !important;
-    // border: none !important;
-    // border-radius: 12px !important;
-    // font-size: 14px !important;
-    // padding: 0 16px !important;
-    // height: 40px !important;
-    // width: 100% !important;
-    // max-width: 100% !important;
-    // box-sizing: border-box !important;
-    // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-    // transition: all 0.2s ease-in-out !important;
+    border: none !important;
+    background: #f8f9fa !important;
+    border-radius: 12px !important;
+    font-size: 14px !important;
+    padding: 0 16px !important;
+    height: 40px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s ease-in-out !important;
     
     &:hover {
+      border: none !important;
       background: #ffffff !important;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
       transform: translateY(-1px) !important;
     }
     
     &:focus {
+      border: none !important;
       background: #ffffff !important;
       box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1), 0 4px 16px rgba(0, 0, 0, 0.12) !important;
       outline: none !important;
@@ -969,7 +979,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: var(--z-modal);
+  z-index: var(--cf-z-modal);
 }
 
 .dropdownPositioned {

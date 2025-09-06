@@ -1,4 +1,5 @@
 @import '~@fluentui/react/dist/sass/References.scss';
+@import '../../styles/theme.module.scss';
 
 .hiddenFileInput {
   position: absolute;
@@ -8,12 +9,12 @@
 }
 
 .dropZone {
-  border: 2px dashed #d0d7de;
-  border-radius: 12px;
-  padding: 40px 24px;
+  border: 2px dashed var(--cf-color-border-default);
+  border-radius: var(--cf-border-radius-xl);
+  padding: var(--cf-spacing-huge) var(--cf-spacing-xxl);
   text-align: center;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, var(--cf-color-bg-secondary) 0%, var(--cf-color-bg-tertiary) 100%);
+  transition: var(--cf-transition-slow);
   cursor: pointer;
   position: relative;
   min-height: 160px;
@@ -22,51 +23,51 @@
   justify-content: center;
   
   &:hover {
-    border-color: #0969da;
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-color: var(--cf-color-border-focus);
+    background: linear-gradient(135deg, var(--cf-color-primary-lightest) 0%, var(--cf-color-primary-lighter) 100%);
     
     .uploadIcon {
-      color: #0969da;
+      color: var(--cf-color-primary);
       transform: scale(1.1);
     }
     
     .browseButton {
-      background: #0969da;
-      color: white;
+      background: var(--cf-color-primary);
+      color: var(--cf-color-text-white);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(9, 105, 218, 0.3);
+      box-shadow: var(--cf-shadow-medium);
     }
   }
   
   &.dragOver {
-    border-color: #0969da;
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-color: var(--cf-color-primary);
+    background: linear-gradient(135deg, var(--cf-color-primary-lighter) 0%, var(--cf-color-primary-lightest) 100%);
     border-style: solid;
     transform: scale(1.02);
     
     .uploadIcon {
-      color: #0969da;
+      color: var(--cf-color-primary);
       animation: bounce 0.6s ease-in-out infinite alternate;
     }
     
     .dropZoneText {
-      color: #0969da;
-      font-weight: 600;
+      color: var(--cf-color-primary);
+      font-weight: var(--cf-font-weight-semibold);
     }
   }
   
   &.fileSelected {
-    border-color: #22c55e;
-    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+    border-color: var(--cf-color-green);
+    background: linear-gradient(135deg, var(--cf-color-bg-secondary) 0%, var(--cf-color-bg-tertiary) 100%);
     
     .successIcon {
-      color: #22c55e;
+      color: var(--cf-color-green);
       animation: checkmark 0.5s ease-out;
     }
     
     .fileName {
-      color: #16a34a;
-      font-weight: 600;
+      color: var(--cf-color-green);
+      font-weight: var(--cf-font-weight-semibold);
     }
   }
 }
@@ -75,69 +76,69 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: var(--cf-spacing-m);
   pointer-events: none;
 }
 
 .uploadIcon {
   font-size: 48px;
-  color: #6b7280;
-  transition: all 0.3s ease;
+  color: var(--cf-color-text-tertiary);
+  transition: var(--cf-transition-slow);
 }
 
 .successIcon {
   font-size: 48px;
-  color: #22c55e;
+  color: var(--cf-color-green);
 }
 
 .dropZoneText {
-  font-size: 18px;
-  font-weight: 500;
-  color: #374151;
+  font-size: var(--cf-font-size-xl);
+  font-weight: var(--cf-font-weight-normal);
+  color: var(--cf-color-text-primary);
   margin: 0;
-  transition: all 0.3s ease;
+  transition: var(--cf-transition-slow);
 }
 
 .orText {
-  color: #9ca3af;
-  font-size: 14px;
-  font-weight: 400;
+  color: var(--cf-color-text-tertiary);
+  font-size: var(--cf-font-size-medium);
+  font-weight: var(--cf-font-weight-normal);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .browseButton {
-  background: #f3f4f6;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
+  background: var(--cf-color-bg-tertiary);
+  border: 2px solid var(--cf-color-border-default);
+  border-radius: var(--cf-border-radius-l);
+  padding: var(--cf-spacing-m) var(--cf-spacing-xxl);
+  font-size: var(--cf-font-size-medium);
+  font-weight: var(--cf-font-weight-semibold);
+  color: var(--cf-color-text-primary);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--cf-transition-slow);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--cf-spacing-s);
   pointer-events: auto;
   text-decoration: none;
   
   &:hover {
-    background: #0969da;
-    border-color: #0969da;
-    color: white;
+    background: var(--cf-color-primary);
+    border-color: var(--cf-color-primary);
+    color: var(--cf-color-text-white);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(9, 105, 218, 0.3);
+    box-shadow: var(--cf-shadow-medium);
   }
   
   &:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(9, 105, 218, 0.2);
+    box-shadow: var(--cf-shadow-light);
   }
   
   &:focus,
   &:focus-visible {
-    outline: 2px solid #0969da;
+    outline: 2px solid var(--cf-color-primary);
     outline-offset: 2px;
   }
   
@@ -147,9 +148,9 @@
 }
 
 .fileName {
-  font-size: 16px;
-  font-weight: 600;
-  color: #374151;
+  font-size: var(--cf-font-size-large);
+  font-weight: var(--cf-font-weight-semibold);
+  color: var(--cf-color-text-primary);
   margin: 0;
   word-break: break-all;
   text-align: center;
@@ -157,29 +158,29 @@
 }
 
 .fileSize {
-  font-size: 14px;
-  color: #6b7280;
+  font-size: var(--cf-font-size-medium);
+  color: var(--cf-color-text-tertiary);
   margin: 0;
 }
 
 .fileInfo {
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 16px;
+  background: var(--cf-color-bg-secondary);
+  border: 1px solid var(--cf-color-border-default);
+  border-radius: var(--cf-border-radius-l);
+  padding: var(--cf-spacing-l);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--cf-spacing-xs);
 }
 
 .acceptedFormats,
 .maxSize {
-  font-size: 12px;
-  color: #6b7280;
+  font-size: var(--cf-font-size-small);
+  color: var(--cf-color-text-tertiary);
   margin: 0;
   
   strong {
-    color: #374151;
+    color: var(--cf-color-text-primary);
   }
 }
 
@@ -211,7 +212,7 @@
 // Responsive design
 @media screen and (max-width: 768px) {
   .dropZone {
-    padding: 24px 16px;
+    padding: var(--cf-spacing-xxl) var(--cf-spacing-l);
     min-height: 120px;
   }
   
@@ -220,12 +221,12 @@
   }
   
   .dropZoneContent {
-    gap: 8px;
+    gap: var(--cf-spacing-s);
   }
   
   .browseButton {
-    padding: 10px 20px;
-    font-size: 13px;
+    padding: var(--cf-spacing-l) var(--cf-spacing-xl);
+    font-size: var(--cf-font-size-small);
   }
 }
 
@@ -247,35 +248,35 @@
 // High contrast support
 @media (prefers-contrast: high) {
   .dropZone {
-    border-color: $ms-color-neutralPrimary;
-    background: $ms-color-white;
+    border-color: var(--cf-color-text-primary);
+    background: var(--cf-color-white);
     
     &:hover,
     &.dragOver {
-      border-color: $ms-color-themePrimary;
-      background: $ms-color-themeLight;
+      border-color: var(--cf-color-primary);
+      background: var(--cf-color-primary-lightest);
     }
     
     &.fileSelected {
-      border-color: $ms-color-green;
-      background: $ms-color-neutralLighter;
+      border-color: var(--cf-color-green);
+      background: var(--cf-color-bg-tertiary);
     }
   }
   
   .browseButton {
-    background: $ms-color-neutralLight;
-    border-color: $ms-color-neutralPrimary;
-    color: $ms-color-neutralPrimary;
+    background: var(--cf-color-bg-tertiary);
+    border-color: var(--cf-color-text-primary);
+    color: var(--cf-color-text-primary);
     
     &:hover {
-      background: $ms-color-themePrimary;
-      border-color: $ms-color-themePrimary;
-      color: $ms-color-white;
+      background: var(--cf-color-primary);
+      border-color: var(--cf-color-primary);
+      color: var(--cf-color-white);
     }
   }
   
   .fileInfo {
-    background: $ms-color-neutralLighter;
-    border-color: $ms-color-neutralPrimary;
+    background: var(--cf-color-bg-tertiary);
+    border-color: var(--cf-color-text-primary);
   }
 }

@@ -16,7 +16,6 @@
 
 - [🎯 Overview](#-overview)
 - [✨ Key Features](#-key-features)
-- [🚀 What's New in v8.0.0](#-whats-new-in-v800)
 - [🏗️ Architecture](#️-architecture)
 - [🛠️ Installation & Setup](#️-installation--setup)
 - [⚙️ Configuration](#️-configuration)
@@ -83,15 +82,39 @@ This is based on the old React-Application-Collab-Footer but has more or less be
 ## 🏗️ Architecture
 
 ### **Hybrid Architecture (Recommended)**
-```mermaid
-graph TB
-    A[User Interface] --> B[HybridFooterService]
-    B --> C[OneDrive Personal Links]
-    B --> D[SharePoint Global Links]
-    C --> E[Microsoft Graph API]
-    D --> F[SharePoint REST API]
-    B --> G[Cache Layer]
-    G --> H[Local Storage]
+
+```
+┌─────────────────────┐
+│   User Interface    │
+│ (React Components)  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ HybridFooterService │
+│ (Service Manager)   │
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    ▼           ▼
+┌─────────┐ ┌─────────────┐
+│OneDrive │ │ SharePoint  │
+│Storage  │ │    Lists    │
+│(Personal│ │ (Global)    │
+└────┬────┘ └──────┬──────┘
+     │             │
+     ▼             ▼
+┌─────────┐ ┌─────────────┐
+│Microsoft│ │ SharePoint  │
+│Graph API│ │  REST API   │
+└─────────┘ └─────────────┘
+     │             │
+     └──────┬──────┘
+            ▼
+    ┌───────────────┐
+    │  Cache Layer  │
+    │(Local Storage)│
+    └───────────────┘
 ```
 
 **Components:**
@@ -135,44 +158,200 @@ graph TB
 
 ### **Prerequisites**
 - SharePoint Online tenant with modern sites
-- Node.js 22+ and npm 8+ installed
+- Node.js 18+ and npm 8+ installed (Node 22+ recommended)
 - SharePoint Framework development environment
-- Site Collection Administrator permissions
+- Site Collection Administrator permissions (required for deployment)
 - Microsoft Graph API permissions (for hybrid architecture)
+- SharePoint App Catalog access (for solution deployment)
+- Modern browser (Chrome 90+, Edge 90+, Firefox 88+, Safari 14+)
 
-### **Quick Start Installation**
+### **📦 Quick Start Installation**
 
+#### **Step 1: Download and Build**
 ```bash
-# 1. Clone the repository
-git clone https://github.com/NicolasKheirallah/quick-links-collaboration-footer.git
-cd quick-links-collaboration-footer
+# Clone the repository
+git clone https://github.com/NicolasKheirallah/React-quick-links-collaboration-footer.git
+cd React-quick-links-collaboration-footer
 
-# 2. Install dependencies
+# Install dependencies
 npm install
 
-# 3. Build the solution
+# Build the solution
 npm run build
 
-# 4. Bundle and package
+# Bundle and package for production
 gulp bundle --ship
 gulp package-solution --ship
-
-# 5. Deploy to SharePoint App Catalog
-# Upload the .sppkg file from sharepoint/solution/
 ```
 
-### **Development Environment Setup**
+#### **Step 2: Deploy to SharePoint**
+1. **Upload to App Catalog**:
+   - Navigate to your SharePoint Admin Center
+   - Go to "More features" → "Apps" → "App Catalog"
+   - Upload `sharepoint/solution/react-quick-links-collaboration-footer.sppkg`
+   - Check "Make this solution available to all sites in the organization"
+   - Click "Deploy"
 
+2. **Grant API Permissions** (for hybrid architecture):
+   - In SharePoint Admin Center, go to "Advanced" → "API access"
+   - Approve pending requests for:
+     - Microsoft Graph: `Files.ReadWrite`
+     - Microsoft Graph: `User.Read`
+
+#### **Step 3: Enable Tenant-Wide (Recommended)**
+```powershell
+# Connect to your SharePoint Admin Center
+Connect-PnPOnline -Url "https://yourtenant-admin.sharepoint.com" -Interactive
+
+# Deploy to all sites in tenant automatically (No custom actions needed!)
+Add-PnPTenantWideExtension -ComponentId "6638da67-06f4-4f55-a1df-485d568e8b72" `
+  -ComponentProperties '{"storageType":"hybrid","autoCreateLists":true}' `
+  -ListType "All"
+
+# Verify tenant-wide deployment
+Get-PnPTenantWideExtension | Where-Object {$_.ComponentId -eq "6638da67-06f4-4f55-a1df-485d568e8b72"}
+```
+
+> **✅ Recommended Approach**: This method automatically deploys the footer to all existing and future sites in your tenant without requiring custom actions on individual sites.
+
+### **🔄 Alternative Installation Methods**
+
+#### **Method 1: Single Site Installation** 
+*Use this method only if you don't want tenant-wide deployment*
+```powershell
+# Connect to specific SharePoint site
+Connect-PnPOnline -Url "https://yourtenant.sharepoint.com/sites/yoursite" -Interactive
+
+# Add the application customizer to specific site
+Add-PnPCustomAction -Name "CollaborationFooter" -Title "Collaboration Footer" `
+  -Location "ClientSideExtension.ApplicationCustomizer" `
+  -ClientSideComponentId "6638da67-06f4-4f55-a1df-485d568e8b72" `
+  -ClientSideComponentProperties '{"storageType":"hybrid","autoCreateLists":true}' `
+  -Scope Site
+
+# Verify installation on specific site
+Get-PnPCustomAction -Scope Site
+```
+
+#### **Method 2: Bulk Site Deployment**
+*Use this for deploying to multiple specific sites (not tenant-wide)*
+```powershell
+# Automated deployment script for multiple sites
+$sites = @(
+  "https://yourtenant.sharepoint.com/sites/site1",
+  "https://yourtenant.sharepoint.com/sites/site2",
+  "https://yourtenant.sharepoint.com/sites/site3"
+)
+
+foreach ($site in $sites) {
+  Connect-PnPOnline -Url $site -Interactive
+  Add-PnPCustomAction -Name "CollaborationFooter" -Title "Collaboration Footer" `
+    -Location "ClientSideExtension.ApplicationCustomizer" `
+    -ClientSideComponentId "6638da67-06f4-4f55-a1df-485d568e8b72" `
+    -ClientSideComponentProperties '{"storageType":"hybrid","autoCreateLists":true}' `
+    -Scope Site
+  Write-Host "✅ Deployed to $site" -ForegroundColor Green
+}
+```
+
+#### **Method 3: Site Template Integration**
+*Use this to include the footer in custom site templates*
+```powershell
+# Apply to site template for new site creation
+$template = Get-PnPSiteTemplate
+Add-PnPCustomActionToSiteTemplate -SiteTemplate $template `
+  -Name "CollaborationFooter" `
+  -Location "ClientSideExtension.ApplicationCustomizer" `
+  -ClientSideComponentId "6638da67-06f4-4f55-a1df-485d568e8b72" `
+  -ClientSideComponentProperties '{"storageType":"hybrid","autoCreateLists":true}'
+```
+
+### **🛠️ Development Environment Setup**
+
+#### **Prerequisites for Development**
 ```bash
-# Install SharePoint Framework globally
+# Install required global packages
 npm install -g @microsoft/generator-sharepoint
+npm install -g gulp-cli
+npm install -g yo
 
-# Serve for local development
+# Verify installations
+node --version  # Should be 18+ 
+npm --version   # Should be 8+
+yo --version    # Should be latest
+```
+
+#### **Development Workflow**
+```bash
+# Clone and setup
+git clone https://github.com/NicolasKheirallah/React-quick-links-collaboration-footer.git
+cd React-quick-links-collaboration-footer
+npm install
+
+# Development commands
+npm run build          # Build TypeScript and bundle
+npm run dev            # Watch mode for development
+gulp serve            # Local development server
+gulp clean            # Clean build artifacts
+
+# Testing commands  
+npm test              # Run unit tests
+npm run test:watch    # Watch mode testing
+npm run test:coverage # Generate coverage report
+
+# Production builds
+npm run build:ship    # Production build
+gulp bundle --ship    # Ship bundle
+gulp package-solution --ship  # Create .sppkg
+```
+
+#### **Local Testing Setup**
+```bash
+# Start local development server
 gulp serve
 
-# Watch for changes during development
-npm run dev
+# In browser, append to any SharePoint page:
+# ?debugManifestsFile=https://localhost:4321/temp/manifests.js&loadSPFX=true&customActions={"6638da67-06f4-4f55-a1df-485d568e8b72":{"location":"ClientSideExtension.ApplicationCustomizer","properties":{"storageType":"hybrid","enableDebugMode":true}}}
 ```
+
+### **🔍 Verification & Testing**
+
+#### **Post-Installation Verification**
+
+##### **For Tenant-Wide Deployment (Recommended)**
+```powershell
+# Connect to SharePoint Admin Center
+Connect-PnPOnline -Url "https://yourtenant-admin.sharepoint.com" -Interactive
+
+# Verify tenant-wide extension is active
+Get-PnPTenantWideExtension | Where-Object {$_.ComponentId -eq "6638da67-06f4-4f55-a1df-485d568e8b72"}
+
+# Check API permissions (for hybrid mode)
+Get-PnPGraphAccessToken # Should return valid token
+
+# Test on any site - footer should appear automatically
+Connect-PnPOnline -Url "https://yourtenant.sharepoint.com/sites/anysite" -Interactive
+# Visit site in browser - footer should be visible without custom actions
+```
+
+##### **For Single Site Deployment**
+```powershell
+# Verify extension is installed on specific site
+Connect-PnPOnline -Url "https://yourtenant.sharepoint.com/sites/yoursite" -Interactive
+Get-PnPCustomAction -Scope Site | Where-Object {$_.Name -eq "CollaborationFooter"}
+
+# Verify lists were created (if autoCreateLists is true)
+Get-PnPList | Where-Object {$_.Title -like "*Footer*"}
+```
+
+#### **User Acceptance Testing Checklist**
+- [ ] Footer appears on all site pages
+- [ ] Personal links can be added and edited
+- [ ] Global links display correctly
+- [ ] Search functionality works
+- [ ] Mobile responsiveness verified
+- [ ] Accessibility tested with screen reader
+- [ ] Cross-browser compatibility confirmed
 
 ---
 
@@ -197,38 +376,59 @@ npm run dev
 
 ### **Configuration Examples**
 
-#### **Production Hybrid Setup (Recommended)**
+#### **Production Tenant-Wide Setup (Recommended)**
 ```powershell
-# PowerShell deployment script
+# Connect to SharePoint Admin Center
+Connect-PnPOnline -Url "https://contoso-admin.sharepoint.com" -Interactive
+
+# Deploy to all sites with hybrid architecture
+Add-PnPTenantWideExtension -ComponentId "6638da67-06f4-4f55-a1df-485d568e8b72" `
+  -ComponentProperties '{
+    "storageType": "hybrid",
+    "autoCreateLists": true,
+    "enableSampleData": false,
+    "maxPersonalLinks": 15,
+    "enableAdminPanel": true,
+    "bannerSize": "medium",
+    "cacheDuration": 300000
+  }' -ListType "All"
+```
+
+#### **SharePoint Lists Only (Enterprise Tenant-Wide)**
+```powershell
+# Connect to SharePoint Admin Center
+Connect-PnPOnline -Url "https://contoso-admin.sharepoint.com" -Interactive
+
+# Deploy to all sites with SharePoint Lists only
+Add-PnPTenantWideExtension -ComponentId "6638da67-06f4-4f55-a1df-485d568e8b72" `
+  -ComponentProperties '{
+    "storageType": "sharepoint-lists",
+    "sharedLinksListTitle": "Enterprise Footer Links",
+    "personalLinksListTitle": "User Footer Preferences",
+    "enableOneDriveStorage": false,
+    "autoCreateLists": true
+  }' -ListType "All"
+```
+
+#### **Single Site Custom Configuration** 
+*Only use if you don't want tenant-wide deployment*
+```powershell
+# Connect to specific site
 $siteUrl = "https://contoso.sharepoint.com/sites/intranet"
 Connect-PnPOnline -Url $siteUrl -Interactive
 
 Add-PnPCustomAction -Name "CollabFooter" -Title "Collaboration Footer" `
   -Location "ClientSideExtension.ApplicationCustomizer" `
   -ClientSideComponentId "6638da67-06f4-4f55-a1df-485d568e8b72" `
-  -ClientSideComponentProperties @{
-    storageType = "hybrid"
-    autoCreateLists = $true
-    enableSampleData = $false
-    maxPersonalLinks = 15
-    enableAdminPanel = $true
-    bannerSize = "medium"
-    cacheDuration = 300000
-  } -Scope Site
-```
-
-#### **SharePoint Lists Only (Enterprise)**
-```powershell
-Add-PnPCustomAction -Name "CollabFooter" -Title "Collaboration Footer" `
-  -Location "ClientSideExtension.ApplicationCustomizer" `
-  -ClientSideComponentId "6638da67-06f4-4f55-a1df-485d568e8b72" `
-  -ClientSideComponentProperties @{
-    storageType = "sharepoint-lists"
-    sharedLinksListTitle = "Enterprise Footer Links"
-    personalLinksListTitle = "User Footer Preferences"
-    enableOneDriveStorage = $false
-    autoCreateLists = $true
-  } -Scope Site
+  -ClientSideComponentProperties '{
+    "storageType": "hybrid",
+    "autoCreateLists": true,
+    "enableSampleData": false,
+    "maxPersonalLinks": 15,
+    "enableAdminPanel": true,
+    "bannerSize": "medium",
+    "cacheDuration": 300000
+  }' -Scope Site
 ```
 
 #### **Development Environment**
@@ -249,29 +449,62 @@ Add-PnPCustomAction -Name "CollabFooter" -Title "Collaboration Footer" `
 #### **Global Footer Links List (Auto-created)**
 ```typescript
 interface IGlobalFooterLinksSchema {
+  // Required fields
   Title: string;                    // Link display name [REQUIRED]
   Footer_x0020_URL: string;         // Destination URL [REQUIRED]  
   Is_x0020_Mandatory: boolean;      // Always visible [REQUIRED]
   Is_x0020_Active: boolean;         // Currently active [REQUIRED]
-  Description?: string;             // Tooltip text [OPTIONAL]
-  Icon_x0020_Name?: string;         // Fluent UI icon [OPTIONAL]
-  Sort_x0020_Order?: number;        // Display order [OPTIONAL]
+  
+  // Optional fields
+  Description?: string;             // Link description/tooltip [OPTIONAL]
+  Icon_x0020_Name?: string;         // Fluent UI icon name [OPTIONAL]
+  Icon_x0020_URL?: string;          // Custom icon URL [OPTIONAL]
+  Sort_x0020_Order?: number;        // Display order (0-999) [OPTIONAL]
   Category?: string;                // Grouping category [OPTIONAL]
-  Target_x0020_Audience?: string;   // Semicolon-separated groups [OPTIONAL]
+  Target_x0020_Users?: string;      // Target users/groups [OPTIONAL]
   Valid_x0020_From?: Date;          // Activation date [OPTIONAL]
   Valid_x0020_To?: Date;            // Expiration date [OPTIONAL]
 }
 ```
 
+**Field Details:**
+- `Title`: Standard SharePoint field - Link display name
+- `Footer_x0020_URL`: URL field - Link destination (supports both URL and description)
+- `Description`: Multi-line text field - Link description or tooltip
+- `Icon_x0020_Name`: Text field - Fluent UI icon name (e.g., "Link", "Home", "Mail")
+- `Icon_x0020_URL`: URL field - Custom icon image URL (overrides Fluent UI icon)
+- `Sort_x0020_Order`: Number field - Display order (0-999, lower numbers first)
+- `Category`: Text field - Category for grouping (e.g., "HR", "IT", "Finance")
+- `Is_x0020_Mandatory`: Boolean field - Forces link to appear for all users
+- `Is_x0020_Active`: Boolean field - Controls link visibility (default: true)
+- `Target_x0020_Users`: User/Group field - Limits visibility to specific users/groups
+- `Valid_x0020_From`: DateTime field - Link activation date
+- `Valid_x0020_To`: DateTime field - Link expiration date
+
 #### **User Link Selections List (Auto-created)**
+*Used to track which global links each user has selected to display in their personal footer*
+
 ```typescript
 interface IUserLinkSelectionsSchema {
+  // Required fields
   User_x0020_Id: number;            // SharePoint User ID [REQUIRED]
-  Global_x0020_Link_x0020_Id: number; // Reference to Global Link [REQUIRED]
-  Is_x0020_Selected: boolean;       // User's preference [REQUIRED]
+  Global_x0020_Link_x0020_Id: number; // Reference to Global Link ID [REQUIRED]
+  Is_x0020_Selected: boolean;       // User's selection preference [REQUIRED]
   Date_x0020_Selected: Date;        // Selection timestamp [REQUIRED]
 }
 ```
+
+**Field Details:**
+- `User_x0020_Id`: Number field - SharePoint User ID (from User Profile)
+- `Global_x0020_Link_x0020_Id`: Lookup field - References ID from Global Footer Links list
+- `Is_x0020_Selected`: Boolean field - Whether user selected this link (true/false)
+- `Date_x0020_Selected`: DateTime field - When the selection was made/updated
+
+**Usage Notes:**
+- Each user can have multiple records (one per global link they've interacted with)
+- Only stores user preferences for optional global links
+- Mandatory global links are always shown regardless of user selection
+- Records are created/updated when users use the "Select Links" dialog
 
 ---
 
@@ -331,42 +564,143 @@ interface IUserLinkSelectionsSchema {
 
 ## 🔐 Security & Permissions
 
-### **Microsoft Graph API Permissions**
+### **📋 Permission Requirements Checklist**
+
+#### **✅ Required for All Deployments**
+- [ ] **Site Collection Administrator** rights on target SharePoint site
+- [ ] **SharePoint App Catalog** access for solution deployment
+- [ ] **Application Customizer** permission to deploy extensions
+
+#### **✅ Required for Hybrid Architecture (Recommended)**
+- [ ] **Microsoft Graph API Permissions** (see details below)
+- [ ] **OneDrive for Business** licenses for all users
+- [ ] **SharePoint Admin Center** access for API permission approval
+
+#### **✅ Required for SharePoint Lists Only**
+- [ ] **Site Owner** or **Site Collection Administrator** for list creation
+- [ ] **Contribute** permissions for users managing personal links
+- [ ] **Read** permissions for all users accessing the footer
+
+### **🔑 Microsoft Graph API Permissions**
+
+**Required Graph API Scopes:**
 ```json
 {
   "webApiPermissionRequests": [
     {
       "resource": "Microsoft Graph",
-      "scope": "Files.ReadWrite"
+      "scope": "Files.ReadWrite",
+      "justification": "Read and write personal link preferences in user's OneDrive"
     },
     {
       "resource": "Microsoft Graph", 
-      "scope": "User.Read"
+      "scope": "User.Read",
+      "justification": "Read user profile information for personalization"
+    },
+    {
+      "resource": "Microsoft Graph",
+      "scope": "Sites.Read.All",
+      "justification": "Read SharePoint site information for list operations"
+    },
+    {
+      "resource": "Microsoft Graph",
+      "scope": "TermStore.Read.All",
+      "justification": "Read taxonomy term store for legacy migrations"
     }
   ]
 }
 ```
 
-### **SharePoint Permissions Model**
-- **Global Links**: Site Collection level permissions
-  - Site Administrators: Full CRUD access
-  - Site Members: Read access only
-  - Site Visitors: Read access only
+**How to Grant Permissions:**
+1. **Automatic Request**: Permissions are requested during app deployment
+2. **Admin Approval**: SharePoint Administrator must approve in Admin Center
+3. **Verification**: Users can verify permissions in their Microsoft 365 account settings
 
-- **User Preferences**: Individual user permissions
-  - Users: Read/write their own selections only
-  - Administrators: Full access for troubleshooting
+### **🏢 SharePoint Permissions Model**
 
-- **OneDrive Storage**: User-owned files
-  - Personal links stored in user's OneDrive
-  - Admin cannot access personal link data
-  - Automatic cleanup on user deletion
+#### **Global Links Management**
+| Role | Create Lists | Add Links | Edit Links | Delete Links | View Links |
+|------|--------------|-----------|------------|--------------|------------|
+| **Site Collection Admin** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Site Owner** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Site Member** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Site Visitor** | ❌ | ❌ | ❌ | ❌ | ✅ |
 
-### **Data Privacy & Compliance**
-- **GDPR Compliant**: User data stored in personal OneDrive
-- **No Tracking Cookies**: All data stored client-side or in Microsoft 365
-- **Audit Logging**: SharePoint change logs track administrative actions
-- **Data Retention**: Follows Microsoft 365 retention policies
+#### **Personal Links Management**
+| Storage Type | User Access | Admin Access | Data Location |
+|--------------|-------------|--------------|---------------|
+| **OneDrive (Hybrid)** | Full control of own data | No access to user data | User's OneDrive |
+| **SharePoint Lists** | Edit own entries only | Full admin access | Site collection |
+
+#### **Administrative Functions**
+| Function | Required Role | Permission Level |
+|----------|---------------|------------------|
+| **Deploy Solution** | SharePoint Administrator | Tenant Admin |
+| **Install on Site** | Site Collection Administrator | Site Admin |
+| **Create Lists** | Site Owner | Site Admin |
+| **Manage Global Links** | Site Member with Contribute | Site Contributor |
+| **Bulk Import/Export** | Site Owner | Site Admin |
+| **View Analytics** | Site Member | Site Contributor |
+
+### **🛡️ Security Architecture**
+
+#### **Data Isolation Model**
+
+```mermaid
+graph TD
+    A[User Request] --> B[Authentication]
+    B --> C[Authorization]
+    C --> D[Data Access]
+    D --> E[OneDrive Data]
+    D --> F[SharePoint Data]
+```
+
+**Security Flow:**
+```
+User Request (SharePoint Page)
+       ↓
+Authentication Layer (Microsoft 365 OAuth)
+       ↓
+Authorization Check (Role & Permission Validation)
+       ↓
+Data Access Layer (Service Factory Pattern)
+   ↙               ↘
+OneDrive Personal     SharePoint Global
+Data (JSON Files)     Data (Site Lists)
+   ↓                     ↓
+User's OneDrive Only  Site Collection Scope
+(GDPR Compliant)      (Admin-Managed)
+```
+
+#### **Access Control Principles**
+- **Least Privilege**: Users only access their own personal data
+- **Data Segregation**: Personal and organizational data stored separately
+- **Audit Trail**: All administrative actions logged in SharePoint
+- **Encrypted Transit**: All API calls use HTTPS/TLS encryption
+- **Token-Based Auth**: Microsoft 365 OAuth tokens for secure access
+
+### **🔒 Data Privacy & Compliance**
+
+#### **GDPR Compliance**
+- ✅ **Right to Access**: Users can export their personal link data
+- ✅ **Right to Rectification**: Users can edit their personal links
+- ✅ **Right to Erasure**: Personal data deleted when user is removed
+- ✅ **Data Portability**: Export functionality for user data
+- ✅ **Privacy by Design**: Personal data stored in user's OneDrive
+
+#### **Data Retention & Lifecycle**
+| Data Type | Storage Location | Retention Period | Deletion Method |
+|-----------|------------------|------------------|-----------------|
+| **Personal Links** | OneDrive | User-controlled | Automatic on account deletion |
+| **Global Links** | SharePoint Lists | Site retention policy | Manual or policy-based |
+| **User Selections** | OneDrive JSON | User-controlled | Automatic on account deletion |
+| **Admin Settings** | Site configuration | Site lifecycle | Manual removal |
+
+#### **Compliance Features**
+- **No Tracking Cookies**: All data stored in Microsoft 365 ecosystem
+- **Audit Logging**: SharePoint unified audit log integration
+- **Data Classification**: Supports Microsoft Purview data classification
+- **eDiscovery**: Compatible with Microsoft 365 eDiscovery tools
 
 ---
 
@@ -397,13 +731,6 @@ interface IUserLinkSelectionsSchema {
 - **Observer Pattern**: Real-time UI updates with React hooks
 - **Factory Pattern**: Dynamic service creation based on configuration
 - **Singleton Pattern**: Shared cache and configuration management
-
-### **Code Quality Metrics**
-- **TypeScript Coverage**: 100% (zero `any` types)
-- **Test Coverage**: 85% unit tests, 70% integration tests
-- **Code Complexity**: Average cyclomatic complexity <5
-- **Bundle Analysis**: No duplicate dependencies, optimal chunking
-- **Performance Budget**: <100KB total bundle size maintained
 
 ---
 
@@ -585,21 +912,6 @@ Add-PnPSiteCollectionAdmin -Owners "user@contoso.com"
 - **Shared Styles**: `SharedStyles.module.scss` for reusable utilities
 - **Enhanced Validation**: `ValidationUtils.ts` with proper type guards
 
-#### **📁 New Files Added**
-```
-src/extensions/collaborationFooter/
-├── constants/ApplicationConstants.ts      # Typed constants
-├── utils/ValidationUtils.ts               # Validation utilities
-├── components/shared/ErrorBoundary.tsx    # Error boundaries
-└── styles/SharedStyles.module.scss        # Shared SCSS utilities
-```
-
-### **Previous Versions Summary**
-- **v7.1.0** - Personal links feature parity, banner sizing system, bulk operations
-- **v7.0.0** - Organization links visibility fix, enhanced state management
-- **v6.1.0** - Modern admin dashboard with real SharePoint API integration
-- **v6.0.0** - Ultra-compact design, advanced search, visual polish
-- **v5.0.0** - Hybrid architecture introduction with OneDrive storage
 
 ---
 
@@ -636,7 +948,6 @@ src/extensions/collaborationFooter/
 #### **v8.3.0 - Collaboration Features**
 - [ ] **Real-time Collaboration**
   - Live link sharing between users
-  - Team-based link collections
   - Collaborative link curation
   - Social features (likes, comments)
 
@@ -656,8 +967,8 @@ We welcome contributions from the community! Please follow these guidelines:
 ### **Development Setup**
 ```bash
 # Fork and clone the repository
-git clone https://github.com/yourusername/quick-links-collaboration-footer.git
-cd quick-links-collaboration-footer
+git clone https://github.com/nicolaskheirallah/react-quick-links-collaboration-footer.git
+cd react-quick-links-collaboration-footer
 
 # Install dependencies
 npm install

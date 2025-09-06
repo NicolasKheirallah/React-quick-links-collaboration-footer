@@ -93,35 +93,24 @@ export const IconGallery: React.FC<IIconGalleryProps> = ({
         }}
       >
         <div 
-          style={{
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            padding: '24px',
-            width: '80vw',
-            maxWidth: '800px',
-            maxHeight: '80vh',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)'
-          }}
+          className={styles.modalContainer}
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3>Select Icon</h3>
+          <div className={styles.headerContainer}>
+            <h3 className={styles.title}>Select Icon</h3>
             <IconButton iconProps={{ iconName: 'Cancel' }} onClick={onClose} />
           </div>
           
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+          <div className={styles.searchContainer}>
             <TextField
               placeholder="Search icons..."
               value={searchQuery}
               onChange={(_, value) => setSearchQuery(value || '')}
               iconProps={{ iconName: 'Search' }}
-              styles={{ root: { flex: 1 } }}
+              className={styles.searchField}
             />
             <DefaultButton
               text="Upload Image"
@@ -131,21 +120,11 @@ export const IconGallery: React.FC<IIconGalleryProps> = ({
                 event.stopPropagation();
                 handleUploadClick();
               }}
-              styles={{
-                root: {
-                  backgroundColor: '#0078d4',
-                  color: 'white',
-                  border: 'none'
-                },
-                rootHovered: {
-                  backgroundColor: '#106ebe',
-                  color: 'white'
-                }
-              }}
+              className={styles.uploadButton}
             />
           </div>
           
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          <div className={styles.categoryContainer}>
             {['All', ...categories].map(category => (
               <DefaultButton
                 key={category}
@@ -156,25 +135,12 @@ export const IconGallery: React.FC<IIconGalleryProps> = ({
                   setSelectedCategory(category);
                 }}
                 primary={selectedCategory === category}
-                styles={{
-                  root: {
-                    minWidth: 'auto',
-                    padding: '4px 12px',
-                    fontSize: '12px'
-                  }
-                }}
+                className={styles.categoryButton}
               />
             ))}
           </div>
           
-          <div style={{
-            flex: 1,
-            overflow: 'auto',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
-            gap: '8px',
-            padding: '8px'
-          }}>
+          <div className={styles.iconsGrid}>
             {filteredIcons.map(icon => (
               <div
                 key={icon.name}
@@ -184,49 +150,20 @@ export const IconGallery: React.FC<IIconGalleryProps> = ({
                   e.nativeEvent.stopImmediatePropagation();
                   setCurrentSelectedIcon(icon.name);
                 }}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  padding: '12px 8px',
-                  border: currentSelectedIcon === icon.name ? '2px solid #0078d4' : '1px solid #e1e1e1',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  backgroundColor: currentSelectedIcon === icon.name ? '#f3f9ff' : 'white',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  if (currentSelectedIcon !== icon.name) {
-                    (e.currentTarget as HTMLElement).style.backgroundColor = '#f8f8f8';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (currentSelectedIcon !== icon.name) {
-                    (e.currentTarget as HTMLElement).style.backgroundColor = 'white';
-                  }
-                }}
+                className={`${styles.iconItem} ${currentSelectedIcon === icon.name ? styles.selected : ''}`}
               >
                 <Icon
                   iconName={icon.name}
-                  style={{
-                    fontSize: '24px',
-                    color: currentSelectedIcon === icon.name ? '#0078d4' : '#333',
-                    marginBottom: '4px'
-                  }}
+                  className={`${styles.iconDisplay} ${currentSelectedIcon === icon.name ? styles.selected : styles.default}`}
                 />
-                <span style={{
-                  fontSize: '10px',
-                  textAlign: 'center',
-                  color: '#666',
-                  wordBreak: 'break-word'
-                }}>
+                <span className={styles.iconName}>
                   {icon.name}
                 </span>
               </div>
             ))}
           </div>
           
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px' }}>
+          <div className={styles.buttonContainer}>
             <DefaultButton 
               text="Cancel" 
               onClick={(event) => {

@@ -1,0 +1,39 @@
+@import '../../styles/theme.module.scss';
+
+.errorContainer {
+  margin: var(--cf-spacing-l);
+  max-width: 100%;
+}
+
+.errorDetails {
+  margin-top: var(--cf-spacing-l);
+  font-size: var(--cf-font-size-small);
+  color: var(--cf-color-text-secondary);
+}
+
+.errorSummary {
+  cursor: pointer;
+  margin-bottom: var(--cf-spacing-xs);
+}
+
+.errorSection {
+  margin-bottom: var(--cf-spacing-l);
+}
+
+.errorLabel {
+  font-weight: var(--cf-font-weight-semibold);
+}
+
+.errorContent {
+  background: var(--cf-color-bg-tertiary);
+  padding: var(--cf-spacing-xs);
+  border-radius: var(--cf-border-radius-s);
+  overflow: auto;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.retryButton {
+  margin-left: var(--cf-spacing-l);
+}

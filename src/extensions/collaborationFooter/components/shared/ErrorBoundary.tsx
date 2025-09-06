@@ -4,6 +4,7 @@ import { Log } from '@microsoft/sp-core-library';
 import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { DefaultButton } from '@fluentui/react/lib/Button';
+import styles from './ErrorBoundary.module.scss';
 
 const LOG_SOURCE = 'ErrorBoundary';
 
@@ -82,22 +83,22 @@ export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundary
     }
 
     return (
-      <details style={{ marginTop: '10px', fontSize: '12px', color: '#605e5c' }}>
-        <summary style={{ cursor: 'pointer', marginBottom: '5px' }}>
+      <details className={styles.errorDetails}>
+        <summary className={styles.errorSummary}>
           {strings.TechnicalDetailsDevMode}
         </summary>
         {error && (
-          <div style={{ marginBottom: '10px' }}>
-            <strong>{strings.Error}:</strong>
-            <pre style={{ background: '#f3f2f1', padding: '5px', borderRadius: '2px', overflow: 'auto' }}>
+          <div className={styles.errorSection}>
+            <div className={styles.errorLabel}>{strings.Error}:</div>
+            <pre className={styles.errorContent}>
               {error.toString()}
             </pre>
           </div>
         )}
         {errorInfo?.componentStack && (
-          <div>
-            <strong>{strings.ComponentStack}</strong>
-            <pre style={{ background: '#f3f2f1', padding: '5px', borderRadius: '2px', overflow: 'auto' }}>
+          <div className={styles.errorSection}>
+            <div className={styles.errorLabel}>{strings.ComponentStack}</div>
+            <pre className={styles.errorContent}>
               {errorInfo.componentStack}
             </pre>
           </div>
@@ -117,7 +118,7 @@ export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundary
       const message = this.props.customMessage || strings.ComponentError;
 
       return (
-        <div style={{ margin: '10px', maxWidth: '100%' }}>
+        <div className={styles.errorContainer}>
           <MessageBar
             messageBarType={MessageBarType.error}
             isMultiline={true}
@@ -126,7 +127,7 @@ export class ErrorBoundary extends Component<IErrorBoundaryProps, IErrorBoundary
                 <DefaultButton
                   onClick={this.handleRetry}
                   text={`${strings.RetryAttempts} (${this.maxRetries - this.state.retryCount} attempts left)`}
-                  style={{ marginLeft: '10px' }}
+                  className={styles.retryButton}
                 />
               ) : undefined
             }
