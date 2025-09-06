@@ -166,6 +166,83 @@ define([], function() {
     "CategoryAlreadyExists": "La catégorie existe déjà",
     "LinkAlreadyExists": "Le lien existe déjà",
     "FieldTooLong": "Le champ est trop long",
-    "FieldTooShort": "Le champ est trop court"
+    "FieldTooShort": "Le champ est trop court",
+    
+    // Filters and Search
+    "FilterByCategory": "Filtrer par catégorie",
+    "SortBy": "Trier par",
+    "Order": "Ordre",
+    
+    // Status indicators
+    "Current": "Actuel",
+    "BarSize": "Taille de la barre",
+    "PillSize": "Taille des pilules",
+    
+    // Additional display modes
+    "OrganizationalPersonalDropdowns": "Menus déroulants organisationnels et personnels",
+    
+    // Dialog and Modal Titles
+    "ManageQuickLinks": "Gérer les liens rapides",
+    "SelectIcon": "Sélectionner l'icône",
+    "UploadCustomIcon": "Télécharger une icône personnalisée",
+    
+    // Placeholders
+    "SearchLinksPlaceholder": "Rechercher des liens...",
+    "SearchIconsPlaceholder": "Rechercher des icônes...",
+    "SearchUsersGroupsPlaceholder": "Rechercher des utilisateurs ou groupes...",
+    "ExampleUrlPlaceholder": "Exemple: https://exemple.com",
+    
+    // Action Buttons
+    "UploadImage": "Télécharger l'image",
+    "RefreshData": "Actualiser les données",
+    "ExportCsv": "Exporter CSV",
+    "ClearAllData": "Effacer toutes les données",
+    "ValidateListsStatus": "Valider le statut des listes",
+    "BackToAdminPanel": "Retour au panneau d'administration",
+    
+    // Section Headers
+    "AdvancedConfiguration": "Configuration avancée",
+    "SharePointListsConfiguration": "Configuration des listes SharePoint",
+    "AnalyticsDashboard": "Tableau de bord analytique",
+    "CategoriesManagement": "Gestion des catégories",
+    
+    // Form Labels and Options
+    "CustomImage": "Image personnalisée",
+    "MediumDefault": "Moyen (Par défaut)",
+    "RealTime": "Temps réel",
+    "EveryHour": "Chaque heure",
+    "ManualOnly": "Manuel uniquement",
+    
+    // Status Messages
+    "LoadingAnalyticsData": "Chargement des données analytiques...",
+    "LoadingCategories": "Chargement des catégories...",
+    "FailedToLoadSettings": "Échec du chargement des paramètres",
+    
+    // Instructions
+    "ChooseOptionalLinksDescription": "Choisissez quels liens optionnels afficher dans votre pied de page de collaboration.",
+    "LeaveEmptyShowEveryone": "Laisser vide pour afficher pour tout le monde",
+    
+    // Panel Headers and Labels
+    "AdminSettingsCollaborationFooter": "Paramètres Admin - Pied de page de collaboration",
+    "CloseAdminPanel": "Fermer le panneau d'administration",
+    "CloseUserSettingsPanel": "Fermer le panneau des paramètres utilisateur",
+    "SaveSettings": "Enregistrer les paramètres",
+    
+    // Settings sections
+    "DisplayLayout": "Affichage et mise en page",
+    "PersonalPreferences": "Préférences personnelles",
+    "AdvancedOptions": "Options avancées",
+    
+    // Settings descriptions
+    "DisplayModeDescription": "Comment les liens sont organisés et affichés",
+    "PillStyleDescription": "Style visuel des boutons de lien",
+    "SpacingDensityDescription": "Quantité d'espacement entre les éléments",
+    "OverallSizeFooterBar": "Taille globale de la barre de pied de page",
+    "SizePillElements": "Taille des éléments et boutons pilules",
+    "ShowIconsDescription": "Afficher les icônes pour les liens et catégories",
+    "ShowBadgesDescription": "Afficher les badges de statut sur les liens",
+    "ClickBehaviorDescription": "Comment les liens s'ouvrent lorsqu'on clique",
+    "MaxVisibleItemsDescription": "Nombre maximum d'éléments à afficher",
+    "SortOrderDescription": "Comment organiser et trier les liens"
   };
 });

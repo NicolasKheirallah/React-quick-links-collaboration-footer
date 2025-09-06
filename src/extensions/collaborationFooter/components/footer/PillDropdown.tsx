@@ -19,6 +19,7 @@ export interface IPillDropdownProps {
   className?: string;
   groupByCategory?: boolean;
   pillStyle?: 'rounded' | 'square' | 'minimal';
+  pillSize?: 'small' | 'medium' | 'large';
   openUpward?: boolean;
   type?: 'category' | 'nested';
   maxHeight?: string;
@@ -46,6 +47,7 @@ const PillDropdownComponent: React.FC<IPillDropdownProps> = ({
   maxHeight = '400px',
   isNested = false,
   pillStyle = 'rounded',
+  pillSize = 'medium',
   density = 'normal'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -217,18 +219,23 @@ const PillDropdownComponent: React.FC<IPillDropdownProps> = ({
     if (isOpen) className += ` ${styles.open}`;
     if (isActive) className += ` ${styles.active}`;
     
-    // Add pill style classes
+    // Apply pill style variations
     if (pillStyle === 'square') className += ` ${styles.pillSquare}`;
-    else if (pillStyle === 'minimal') className += ` ${styles.pillMinimal}`;
-    else if (pillStyle === 'rounded') className += ` ${styles.pillRounded}`;
+    if (pillStyle === 'minimal') className += ` ${styles.pillMinimal}`;
+    if (pillStyle === 'rounded') className += ` ${styles.pillRounded}`;
     
-    // Add density classes
+    // Apply pill size variations
+    if (pillSize === 'small') className += ` ${styles.pillSizeSmall}`;
+    if (pillSize === 'large') className += ` ${styles.pillSizeLarge}`;
+    if (pillSize === 'medium') className += ` ${styles.pillSizeMedium}`;
+    
+    // Apply density variations
     if (density === 'compact') className += ` ${styles.densityCompact}`;
-    else if (density === 'spacious') className += ` ${styles.densitySpacious}`;
-    else className += ` ${styles.densityNormal}`;
+    if (density === 'spacious') className += ` ${styles.densitySpacious}`;
+    if (density === 'normal') className += ` ${styles.densityNormal}`;
     
     return className;
-  }, [variant, isOpen, isActive, pillStyle, density]);
+  }, [variant, isOpen, isActive, pillStyle, pillSize, density]);
 
   const renderDropdownContent = () => {
     const categories = Object.keys(groupedItems);
@@ -419,31 +426,20 @@ const PillDropdownComponent: React.FC<IPillDropdownProps> = ({
       {isOpen && (
         <div
           className={styles.dropdownPortal}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 9999,
-            pointerEvents: 'none'
-          }}
         >
           <AnimatedContainer
             isVisible={isOpen}
-            className={styles.dropdownContainer}
+            className={`${styles.dropdownContainer} ${styles.dropdownPositioned}`}
             style={{
-              position: 'absolute',
               bottom: position.bottom,
               left: position.left,
-              right: position.right,
-              pointerEvents: 'auto'
+              right: position.right
             }}
           >
             <div
               ref={dropdownRef}
-              className={styles.dropdown}
-              style={{ maxHeight }}
+              className={`${styles.dropdown} ${styles.dropdownMaxHeight}`}
+              style={{ '--dropdown-max-height': maxHeight } as React.CSSProperties}
             >
               <div className={styles.dropdownHeader}>
                 <div className={styles.dropdownTitle}>
@@ -473,6 +469,9 @@ export const PillDropdown = memo(PillDropdownComponent, (prevProps, nextProps) =
   if (prevProps.isActive !== nextProps.isActive) return false;
   if (prevProps.badge !== nextProps.badge) return false;
   if (prevProps.isNested !== nextProps.isNested) return false;
+  if (prevProps.pillStyle !== nextProps.pillStyle) return false;
+  if (prevProps.pillSize !== nextProps.pillSize) return false;
+  if (prevProps.density !== nextProps.density) return false;
   
   if (Array.isArray(prevProps.items) && Array.isArray(nextProps.items)) {
     if (prevProps.items.length !== nextProps.items.length) return false;

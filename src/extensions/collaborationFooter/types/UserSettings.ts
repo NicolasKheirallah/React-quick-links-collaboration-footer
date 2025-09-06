@@ -24,6 +24,18 @@ export enum Density {
   Spacious = 'spacious'
 }
 
+export enum BarSize {
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large'
+}
+
+export enum PillSize {
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large'
+}
+
 export enum SortOrder {
   Alphabetical = 'alphabetical',
   UsageFrequency = 'usage-frequency',
@@ -41,7 +53,9 @@ export interface IUserSettings {
   // Display Mode Settings
   displayMode: DisplayMode;
   pillStyle: PillStyle;
+  pillSize: PillSize;
   density: Density;
+  barSize: BarSize;
   
   // Icon and Badge Settings
   showIcons: boolean;
@@ -78,7 +92,9 @@ export const DEFAULT_USER_SETTINGS: IUserSettings = {
   // Display Mode Settings
   displayMode: DisplayMode.OrgPersonalDropdowns,
   pillStyle: PillStyle.Rounded,
+  pillSize: PillSize.Medium,
   density: Density.Normal,
+  barSize: BarSize.Medium,
   
   // Icon and Badge Settings  
   showIcons: true,

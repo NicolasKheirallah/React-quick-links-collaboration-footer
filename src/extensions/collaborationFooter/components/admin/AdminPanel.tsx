@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { PrimaryButton, DefaultButton } from '@fluentui/react/lib/Button';
 import { ScrollablePane } from '@fluentui/react/lib/ScrollablePane';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { SharePointConfigSection } from './SharePointConfigSection';
 import { DisplaySettingsSection } from './DisplaySettingsSection';
 import { PerformanceSection } from './PerformanceSection';
@@ -48,8 +49,8 @@ export const AdminPanel: React.FC<IAdminPanelProps> = ({
       isOpen={isOpen}
       onDismiss={onDismiss}
       type={PanelType.medium}
-      headerText="Admin Settings - Collaboration Footer"
-      closeButtonAriaLabel="Close admin panel"
+      headerText={strings.AdminSettingsCollaborationFooter}
+      closeButtonAriaLabel={strings.CloseAdminPanel}
       styles={{
         main: { zIndex: 1000 }
       }}
@@ -100,13 +101,13 @@ export const AdminPanel: React.FC<IAdminPanelProps> = ({
         
         <div className={styles.adminActions}>
           <PrimaryButton
-            text="Save Settings"
+            text={strings.SaveSettings}
             onClick={onSaveSettings}
             disabled={isLoading}
             styles={{ root: { marginRight: '8px' } }}
           />
           <DefaultButton
-            text="Cancel"
+            text={strings.Cancel}
             onClick={onDismiss}
             disabled={isLoading}
           />

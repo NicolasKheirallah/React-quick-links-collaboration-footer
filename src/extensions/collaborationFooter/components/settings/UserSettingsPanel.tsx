@@ -18,12 +18,15 @@ import {
   Icon
 } from '@fluentui/react';
 import { BaseComponentContext } from '@microsoft/sp-component-base';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { UserSettingsService } from '../../services/UserSettingsService';
 import { 
   IUserSettings, 
   DisplayMode, 
   PillStyle, 
+  PillSize,
   Density, 
+  BarSize,
   SortOrder, 
   ClickBehavior,
   DEFAULT_USER_SETTINGS 
@@ -182,21 +185,33 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
 
   // Dropdown options
   const displayModeOptions: IDropdownOption[] = [
-    { key: DisplayMode.FlatPills, text: 'Flat Pills (Current Style)' },
-    { key: DisplayMode.CategoryDropdowns, text: 'Category Dropdowns' },
-    { key: DisplayMode.TypeBasedDropdowns, text: 'Organizational & Personal Dropdowns' }
+    { key: DisplayMode.FlatPills, text: settings.displayMode === DisplayMode.FlatPills ? `${strings.FlatPills} (${strings.Current})` : strings.FlatPills },
+    { key: DisplayMode.CategoryDropdowns, text: settings.displayMode === DisplayMode.CategoryDropdowns ? `${strings.CategoryDropdowns} (${strings.Current})` : strings.CategoryDropdowns },
+    { key: DisplayMode.TypeBasedDropdowns, text: settings.displayMode === DisplayMode.TypeBasedDropdowns ? `${strings.OrganizationalPersonalDropdowns} (${strings.Current})` : strings.OrganizationalPersonalDropdowns }
   ];
 
   const pillStyleOptions: IDropdownOption[] = [
-    { key: PillStyle.Rounded, text: 'Rounded (Current)' },
-    { key: PillStyle.Square, text: 'Square' },
-    { key: PillStyle.Minimal, text: 'Minimal' }
+    { key: PillStyle.Rounded, text: settings.pillStyle === PillStyle.Rounded ? `${strings.Rounded} (${strings.Current})` : strings.Rounded },
+    { key: PillStyle.Square, text: settings.pillStyle === PillStyle.Square ? `${strings.Square} (${strings.Current})` : strings.Square },
+    { key: PillStyle.Minimal, text: settings.pillStyle === PillStyle.Minimal ? `${strings.Minimal} (${strings.Current})` : strings.Minimal }
   ];
 
   const densityOptions: IDropdownOption[] = [
-    { key: Density.Compact, text: 'Compact' },
-    { key: Density.Normal, text: 'Normal (Current)' },
-    { key: Density.Spacious, text: 'Spacious' }
+    { key: Density.Compact, text: settings.density === Density.Compact ? `${strings.Compact} (${strings.Current})` : strings.Compact },
+    { key: Density.Normal, text: settings.density === Density.Normal ? `${strings.Normal} (${strings.Current})` : strings.Normal },
+    { key: Density.Spacious, text: settings.density === Density.Spacious ? `${strings.Spacious} (${strings.Current})` : strings.Spacious }
+  ];
+
+  const barSizeOptions: IDropdownOption[] = [
+    { key: BarSize.Small, text: settings.barSize === BarSize.Small ? `${strings.Small} (${strings.Current})` : strings.Small },
+    { key: BarSize.Medium, text: settings.barSize === BarSize.Medium ? `${strings.Medium} (${strings.Current})` : strings.Medium },
+    { key: BarSize.Large, text: settings.barSize === BarSize.Large ? `${strings.Large} (${strings.Current})` : strings.Large }
+  ];
+
+  const pillSizeOptions: IDropdownOption[] = [
+    { key: PillSize.Small, text: settings.pillSize === PillSize.Small ? `${strings.Small} (${strings.Current})` : strings.Small },
+    { key: PillSize.Medium, text: settings.pillSize === PillSize.Medium ? `${strings.Medium} (${strings.Current})` : strings.Medium },
+    { key: PillSize.Large, text: settings.pillSize === PillSize.Large ? `${strings.Large} (${strings.Current})` : strings.Large }
   ];
 
   const sortOrderOptions: IDropdownOption[] = [
@@ -213,9 +228,9 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
   ];
 
   const iconSizeOptions: IDropdownOption[] = [
-    { key: 'small', text: 'Small' },
-    { key: 'medium', text: 'Medium (Current)' },
-    { key: 'large', text: 'Large' }
+    { key: 'small', text: settings.iconSize === 'small' ? `${strings.Small} (${strings.Current})` : strings.Small },
+    { key: 'medium', text: settings.iconSize === 'medium' ? `${strings.Medium} (${strings.Current})` : strings.Medium },
+    { key: 'large', text: settings.iconSize === 'large' ? `${strings.Large} (${strings.Current})` : strings.Large }
   ];
 
   const syncFrequencyOptions: IDropdownOption[] = [
@@ -313,16 +328,16 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
 
   const renderDisplaySettings = () => (
     <Stack tokens={{ childrenGap: 16 }}>
-      <Text variant="mediumPlus" className={styles.sectionTitle}>Display & Layout</Text>
+      <Text variant="mediumPlus" className={styles.sectionTitle}>{strings.DisplayLayout}</Text>
       
       <Dropdown
-        label="Display Mode"
+        label={strings.DisplayMode}
         options={displayModeOptions}
         selectedKey={settings.displayMode}
         onChange={(_, option) => option && updateSetting('displayMode', option.key as DisplayMode)}
       />
       <Text variant="small" className={styles.settingsDescription}>
-        Choose how links are organized and displayed
+        {strings.DisplayModeDescription}
       </Text>
       {renderDisplayModePreview(settings.displayMode)}
 
@@ -345,6 +360,26 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
       />
       <Text variant="small" className={styles.settingsDescription}>
         How much space between elements
+      </Text>
+
+      <Dropdown
+        label="Bar Size"
+        options={barSizeOptions}
+        selectedKey={settings.barSize}
+        onChange={(_, option) => option && updateSetting('barSize', option.key as BarSize)}
+      />
+      <Text variant="small" className={styles.settingsDescription}>
+        Overall size of the footer bar
+      </Text>
+
+      <Dropdown
+        label="Pill Size"
+        options={pillSizeOptions}
+        selectedKey={settings.pillSize}
+        onChange={(_, option) => option && updateSetting('pillSize', option.key as PillSize)}
+      />
+      <Text variant="small" className={styles.settingsDescription}>
+        Size of pill elements and buttons
       </Text>
 
       <Toggle

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { SearchBox } from '@fluentui/react/lib/SearchBox';
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
-import { getTheme } from '@fluentui/react/lib/Styling';
 import styles from './ModernCollabFooter.module.scss';
 
 export interface IFooterSearchProps {
@@ -23,7 +22,6 @@ export const FooterSearch: React.FC<IFooterSearchProps> = ({
   handleLinkClick,
   renderLinkBadge
 }) => {
-  const theme = getTheme();
 
   if (!showSearch) return null;
 
@@ -48,7 +46,7 @@ export const FooterSearch: React.FC<IFooterSearchProps> = ({
         <div className={styles.searchResults}>
           {filteredLinks.length > 0 ? (
             <>
-              <div style={{ fontSize: '11px', color: theme.palette.neutralSecondary, padding: '4px 8px' }}>
+              <div className={styles.searchResultsCount}>
                 Found {filteredLinks.length} link{filteredLinks.length !== 1 ? 's' : ''}
               </div>
               {filteredLinks.slice(0, 5).map((link, index) => (
@@ -71,7 +69,7 @@ export const FooterSearch: React.FC<IFooterSearchProps> = ({
               ))}
             </>
           ) : (
-            <div style={{ fontSize: '11px', color: theme.palette.neutralSecondary, padding: '4px 8px' }}>
+            <div className={styles.searchNoResults}>
               No links found for "{searchQuery}"
             </div>
           )}

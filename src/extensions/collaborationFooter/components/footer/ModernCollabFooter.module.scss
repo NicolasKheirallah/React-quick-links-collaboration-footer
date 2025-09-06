@@ -21,6 +21,7 @@
   --transition: all 0.2s ease;
   --z-footer: 99;
   --z-search: 101;
+  --z-notification: 102;
   --z-modal: 1000;
 }
 
@@ -369,6 +370,8 @@
 
 .notificationBar {
   margin-bottom: 6px;
+  position: relative;
+  z-index: var(--z-notification);
   
   :global(.ms-MessageBar) {
     border-radius: var(--border-radius-small);
@@ -816,6 +819,167 @@
       margin-bottom: 4px;
     }
   }
+}
+
+/* Loading and message styles */
+.loadingContainer {
+  text-align: center;
+  padding: 8px;
+  font-size: 12px;
+  color: var(--ms-color-neutralSecondary, #605e5c);
+}
+
+.noLinksMessage {
+  font-size: 11px;
+  color: var(--ms-color-neutralSecondary, #605e5c);
+  padding: 4px 8px;
+}
+
+.searchResultsCount {
+  font-size: 11px;
+  color: var(--ms-color-neutralSecondary, #605e5c);
+  padding: 4px 8px;
+}
+
+.searchNoResults {
+  font-size: 11px;
+  color: var(--ms-color-neutralSecondary, #605e5c);
+  padding: 4px 8px;
+}
+
+/* Link wrapper and button styles */
+.linkWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.linkButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  
+  &.showIconsOrBadges {
+    display: flex;
+  }
+  
+  &.hideIconsAndBadges {
+    display: inline-flex;
+  }
+}
+
+.linkIconContainer {
+  display: inline-flex;
+  align-items: center;
+}
+
+.linkDescription {
+  font-size: 9px;
+  color: var(--ms-color-neutralSecondary, #605e5c);
+  text-align: center;
+  max-width: 80px;
+  word-wrap: break-word;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+/* Button icon colors */
+.primaryColorIcon {
+  color: var(--button-color);
+}
+
+/* Bar size classes */
+.barSizeSmall {
+  .footerContainer {
+    padding: 2px 8px !important;
+    min-height: 32px;
+    
+    .linkItem {
+      height: 20px !important;
+      font-size: 9px !important;
+      padding: 1px 6px !important;
+    }
+    
+    .compactButton {
+      padding: 1px 4px !important;
+      min-width: 18px !important;
+      width: 20px !important;
+      height: 20px !important;
+      font-size: 9px !important;
+      
+      .buttonIcon {
+        font-size: 8px !important;
+      }
+    }
+  }
+}
+
+.barSizeMedium {
+  /* Default medium size (normal styling) */
+  .footerContainer {
+    padding: 4px 12px;
+    min-height: 40px;
+    
+    .compactButton {
+      padding: 3px 8px !important;
+      min-width: 24px !important;
+      width: 24px !important;
+      height: 24px !important;
+      font-size: 11px !important;
+      
+      .buttonIcon {
+        font-size: 9px !important;
+      }
+    }
+  }
+}
+
+.barSizeLarge {
+  .footerContainer {
+    padding: 8px 16px !important;
+    min-height: 56px;
+    
+    .linkItem {
+      height: 32px !important;
+      font-size: 13px !important;
+      padding: 6px 12px !important;
+    }
+    
+    .compactButton {
+      padding: 6px 12px !important;
+      min-width: 32px !important;
+      width: 32px !important;
+      height: 32px !important;
+      font-size: 13px !important;
+      
+      .buttonIcon {
+        font-size: 11px !important;
+      }
+    }
+  }
+}
+
+/* Dropdown positioning styles */
+.dropdownPortal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: var(--z-modal);
+}
+
+.dropdownPositioned {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.dropdownMaxHeight {
+  /* Dynamic max-height will be applied via CSS variable */
+  max-height: var(--dropdown-max-height, 400px);
 }
 
 @media (prefers-reduced-motion: reduce) {

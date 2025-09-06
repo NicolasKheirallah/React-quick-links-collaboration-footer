@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { memo, useMemo } from 'react';
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
-import { getTheme } from '@fluentui/react/lib/Styling';
-import { IUserSettings, DisplayMode, PillStyle, Density } from '../../types/UserSettings';
+import { IUserSettings, DisplayMode, PillStyle, PillSize, Density } from '../../types/UserSettings';
 import { CategoryPillDropdowns } from './CategoryPillDropdowns';
 import styles from './ModernCollabFooter.module.scss';
 
@@ -22,7 +21,6 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
   userSettings
 }) => {
   
-  const theme = useMemo(() => getTheme(), []);
 
   const visibleLinks = allLinksToDisplay;
   const hasMoreLinks = false;
@@ -62,14 +60,6 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
     }
   };
 
-  const getIconSize = () => {
-    switch (userSettings.iconSize) {
-      case 'small': return '12px';
-      case 'large': return '20px';
-      default: return '16px';
-    }
-  };
-
   const getIconSizeClass = () => {
     switch (userSettings.iconSize) {
       case 'small': return styles.iconSizeSmall;
@@ -78,16 +68,19 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
     }
   };
 
+  const getPillSizeString = () => {
+    switch (userSettings.pillSize) {
+      case PillSize.Small: return 'small';
+      case PillSize.Large: return 'large';
+      default: return 'medium';
+    }
+  };
+
   if (isLoading) {
     return (
       <div className={styles.contentArea}>
         <div className={`${styles.linksContainer} ${getDensityClass()}`}>
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '8px', 
-            color: theme.palette.neutralSecondary,
-            fontSize: '12px'
-          }}>
+          <div className={styles.loadingContainer}>
             Loading links...
           </div>
         </div>
@@ -106,6 +99,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
             displayMode="mixed"
             showBadges={userSettings.showBadges}
             pillStyle={userSettings.pillStyle.toLowerCase() as 'rounded' | 'square' | 'minimal'}
+            pillSize={getPillSizeString() as 'small' | 'medium' | 'large'}
             density={userSettings.density.toLowerCase() as 'compact' | 'normal' | 'spacious'}
           />
         </div>
@@ -124,6 +118,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
             displayMode="category"
             showBadges={userSettings.showBadges}
             pillStyle={userSettings.pillStyle.toLowerCase() as 'rounded' | 'square' | 'minimal'}
+            pillSize={getPillSizeString() as 'small' | 'medium' | 'large'}
             density={userSettings.density.toLowerCase() as 'compact' | 'normal' | 'spacious'}
           />
         </div>
@@ -142,6 +137,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
             displayMode="type"
             showBadges={userSettings.showBadges}
             pillStyle={userSettings.pillStyle.toLowerCase() as 'rounded' | 'square' | 'minimal'}
+            pillSize={getPillSizeString() as 'small' | 'medium' | 'large'}
             density={userSettings.density.toLowerCase() as 'compact' | 'normal' | 'spacious'}
           />
         </div>
@@ -157,35 +153,19 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
             {visibleLinks.map((link, index) => (
               <div
                 key={`${link.key}-${index}`}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '2px'
-                }}
+                className={styles.linkWrapper}
               >
                 <button
-                  className={`${styles.linkItem} ${getPillStyleClass()}`}
+                  className={`${styles.linkItem} ${getPillStyleClass()} ${styles.linkButton} ${userSettings.showIcons || userSettings.showBadges ? styles.showIconsOrBadges : styles.hideIconsAndBadges}`}
                   onClick={(e) => handleLinkClick(link, e)}
                   title={link.title || link.name}
                   disabled={!link.href}
                   style={{
-                    display: userSettings.showIcons || userSettings.showBadges ? 'flex' : 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '3px',
                     fontSize: userSettings.iconSize === 'small' ? '10px' : userSettings.iconSize === 'large' ? '14px' : '11px'
                   }}
                 >
                   {userSettings.showIcons && (
-                    <span 
-                      className={styles.linkIcon} 
-                      style={{ 
-                        fontSize: getIconSize(),
-                        display: 'inline-flex',
-                        alignItems: 'center'
-                      }}
-                    >
+                    <span className={`${styles.linkIcon} ${styles.linkIconContainer}`}>
                       {link.iconProps?.iconName ? (
                         <i className={`ms-Icon ms-Icon--${link.iconProps.iconName}`} />
                       ) : (
@@ -198,16 +178,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
                 </button>
                 {(link.data as any)?.description && (
                   <div
-                    style={{
-                      fontSize: '9px',
-                      color: theme.palette.neutralSecondary,
-                      textAlign: 'center',
-                      maxWidth: '120px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      lineHeight: '1.2'
-                    }}
+                    className={styles.linkDescription}
                     title={(link.data as any)?.description}
                   >
                     {(link.data as any)?.description}
@@ -220,7 +191,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
             )}
           </>
         ) : (
-          <div style={{ fontSize: '11px', color: theme.palette.neutralSecondary, padding: '4px 8px' }}>
+          <div className={styles.noLinksMessage}>
             No links available. Click "Manage My Links" to add some!
           </div>
         )}
@@ -236,6 +207,7 @@ export const FooterContent = memo(FooterContentComponent, (prevProps, nextProps)
   if (prevProps.userSettings.showBadges !== nextProps.userSettings.showBadges) return false;
   if (prevProps.userSettings.density !== nextProps.userSettings.density) return false;
   if (prevProps.userSettings.pillStyle !== nextProps.userSettings.pillStyle) return false;
+  if (prevProps.userSettings.pillSize !== nextProps.userSettings.pillSize) return false;
   if (prevProps.userSettings.displayMode !== nextProps.userSettings.displayMode) return false;
   if (prevProps.userSettings.showIcons !== nextProps.userSettings.showIcons) return false;
   if (prevProps.userSettings.iconSize !== nextProps.userSettings.iconSize) return false;

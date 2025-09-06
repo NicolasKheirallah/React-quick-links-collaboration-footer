@@ -166,6 +166,83 @@ define([], function() {
     "CategoryAlreadyExists": "Kategorie existiert bereits",
     "LinkAlreadyExists": "Link existiert bereits",
     "FieldTooLong": "Feld ist zu lang",
-    "FieldTooShort": "Feld ist zu kurz"
+    "FieldTooShort": "Feld ist zu kurz",
+    
+    // Filters and Search
+    "FilterByCategory": "Nach Kategorie filtern",
+    "SortBy": "Sortieren nach",
+    "Order": "Reihenfolge",
+    
+    // Status indicators
+    "Current": "Aktuell",
+    "BarSize": "Leistengröße",
+    "PillSize": "Pillengröße",
+    
+    // Additional display modes
+    "OrganizationalPersonalDropdowns": "Organisations- und Personal-Dropdowns",
+    
+    // Dialog and Modal Titles
+    "ManageQuickLinks": "Quick Links verwalten",
+    "SelectIcon": "Icon auswählen",
+    "UploadCustomIcon": "Benutzerdefiniertes Icon hochladen",
+    
+    // Placeholders
+    "SearchLinksPlaceholder": "Links suchen...",
+    "SearchIconsPlaceholder": "Icons suchen...",
+    "SearchUsersGroupsPlaceholder": "Benutzer oder Gruppen suchen...",
+    "ExampleUrlPlaceholder": "Beispiel: https://beispiel.com",
+    
+    // Action Buttons
+    "UploadImage": "Bild hochladen",
+    "RefreshData": "Daten aktualisieren",
+    "ExportCsv": "CSV exportieren",
+    "ClearAllData": "Alle Daten löschen",
+    "ValidateListsStatus": "Listen-Status validieren",
+    "BackToAdminPanel": "Zurück zum Admin-Panel",
+    
+    // Section Headers
+    "AdvancedConfiguration": "Erweiterte Konfiguration",
+    "SharePointListsConfiguration": "SharePoint-Listen-Konfiguration",
+    "AnalyticsDashboard": "Analytics-Dashboard",
+    "CategoriesManagement": "Kategorien-Management",
+    
+    // Form Labels and Options
+    "CustomImage": "Benutzerdefiniertes Bild",
+    "MediumDefault": "Mittel (Standard)",
+    "RealTime": "Echtzeit",
+    "EveryHour": "Stündlich",
+    "ManualOnly": "Nur manuell",
+    
+    // Status Messages
+    "LoadingAnalyticsData": "Analytics-Daten werden geladen...",
+    "LoadingCategories": "Kategorien werden geladen...",
+    "FailedToLoadSettings": "Einstellungen konnten nicht geladen werden",
+    
+    // Instructions
+    "ChooseOptionalLinksDescription": "Wählen Sie, welche optionalen Links in Ihrem Kollaborations-Footer angezeigt werden sollen.",
+    "LeaveEmptyShowEveryone": "Leer lassen, um für alle anzuzeigen",
+    
+    // Panel Headers and Labels
+    "AdminSettingsCollaborationFooter": "Admin-Einstellungen - Kollaborations-Footer",
+    "CloseAdminPanel": "Admin-Panel schließen",
+    "CloseUserSettingsPanel": "Benutzereinstellungen-Panel schließen",
+    "SaveSettings": "Einstellungen speichern",
+    
+    // Settings sections
+    "DisplayLayout": "Anzeige & Layout",
+    "PersonalPreferences": "Persönliche Einstellungen",
+    "AdvancedOptions": "Erweiterte Optionen",
+    
+    // Settings descriptions
+    "DisplayModeDescription": "Wie Links organisiert und angezeigt werden",
+    "PillStyleDescription": "Visueller Stil der Link-Buttons",
+    "SpacingDensityDescription": "Abstand zwischen Elementen",
+    "OverallSizeFooterBar": "Gesamtgröße der Footer-Leiste",
+    "SizePillElements": "Größe der Pill-Elemente und Buttons",
+    "ShowIconsDescription": "Icons für Links und Kategorien anzeigen",
+    "ShowBadgesDescription": "Status-Badges auf Links anzeigen",
+    "ClickBehaviorDescription": "Wie Links beim Klicken geöffnet werden",
+    "MaxVisibleItemsDescription": "Maximale Anzahl anzuzeigender Elemente",
+    "SortOrderDescription": "Wie Links organisiert und sortiert werden"
   };
 });

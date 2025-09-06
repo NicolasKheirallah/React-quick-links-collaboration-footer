@@ -210,6 +210,84 @@ define([], function() {
     // Filters and Search
     "FilterByCategory": "Filter by category",
     "SortBy": "Sort by",
-    "Order": "Order"
+    "Order": "Order",
+    
+    // Status indicators
+    "Current": "Current",
+    "BarSize": "Bar Size",
+    "PillSize": "Pill Size",
+    
+    // Additional display modes
+    "OrganizationalPersonalDropdowns": "Organizational & Personal Dropdowns",
+    
+    // Admin settings
+    "ShowIconsByDefault": "Show icons by default",
+    "HideIconsByDefault": "Hide icons by default",
+    "ShowBadgesByDefault": "Show badges by default",
+    "HideBadgesByDefault": "Hide badges by default",
+    
+    // Dialog and Modal Titles
+    "ManageQuickLinks": "Manage Quick Links",
+    "SelectIcon": "Select Icon",
+    "UploadCustomIcon": "Upload Custom Icon",
+    
+    // Placeholders
+    "SearchLinksPlaceholder": "Search links...",
+    "SearchIconsPlaceholder": "Search icons...",
+    "SearchUsersGroupsPlaceholder": "Search users or groups...",
+    "ExampleUrlPlaceholder": "Example: https://example.com",
+    
+    // Action Buttons
+    "UploadImage": "Upload Image",
+    "RefreshData": "Refresh Data",
+    "ExportCsv": "Export CSV",
+    "ClearAllData": "Clear All Data",
+    "ValidateListsStatus": "Validate Lists Status",
+    "BackToAdminPanel": "Back to Admin Panel",
+    
+    // Section Headers
+    "AdvancedConfiguration": "Advanced Configuration",
+    "SharePointListsConfiguration": "SharePoint Lists Configuration",
+    "AnalyticsDashboard": "Analytics Dashboard",
+    "CategoriesManagement": "Categories Management",
+    
+    // Form Labels and Options
+    "CustomImage": "Custom Image",
+    "MediumDefault": "Medium (Default)",
+    "RealTime": "Real-time",
+    "EveryHour": "Every Hour",
+    "ManualOnly": "Manual Only",
+    
+    // Status Messages
+    "LoadingAnalyticsData": "Loading analytics data...",
+    "LoadingCategories": "Loading categories...",
+    "FailedToLoadSettings": "Failed to load settings",
+    
+    // Instructions
+    "ChooseOptionalLinksDescription": "Choose which optional links to show in your collaboration footer.",
+    "LeaveEmptyShowEveryone": "Leave empty to show for everyone",
+    
+    // Panel Headers and Labels
+    "AdminSettingsCollaborationFooter": "Admin Settings - Collaboration Footer",
+    "CloseAdminPanel": "Close admin panel",
+    "CloseUserSettingsPanel": "Close user settings panel",
+    "SaveSettings": "Save Settings",
+    
+    // Settings sections
+    "DisplayLayout": "Display & Layout",
+    "PersonalPreferences": "Personal Preferences",
+    "AdvancedOptions": "Advanced Options",
+    
+    // Settings descriptions
+    "DisplayModeDescription": "How links are organized and displayed",
+    "PillStyleDescription": "Visual style of link buttons",
+    "SpacingDensityDescription": "Amount of spacing between elements",
+    "OverallSizeFooterBar": "Overall size of the footer bar",
+    "SizePillElements": "Size of pill elements and buttons",
+    "ShowIconsDescription": "Display icons for links and categories",
+    "ShowBadgesDescription": "Display status badges on links",
+    "ClickBehaviorDescription": "How links open when clicked",
+    "MaxVisibleItemsDescription": "Maximum number of items to display",
+    "SortOrderDescription": "How to organize and sort links"
   };
 });

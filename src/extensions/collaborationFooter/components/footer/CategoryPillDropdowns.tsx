@@ -14,6 +14,7 @@ export interface ICategoryPillDropdownsProps {
   maxPillsPerRow?: number;
   className?: string;
   pillStyle?: 'rounded' | 'square' | 'minimal';
+  pillSize?: 'small' | 'medium' | 'large';
   density?: 'compact' | 'normal' | 'spacious';
 }
 
@@ -28,6 +29,7 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
   maxPillsPerRow = 6,
   className = '',
   pillStyle = 'rounded',
+  pillSize = 'medium',
   density = 'normal'
 }) => {
   const groupedOrgLinks = useMemo((): IGroupedLinks => {
@@ -127,6 +129,7 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
             showIcons={true}
             isNested={false}
             pillStyle={pillStyle}
+            pillSize={pillSize}
             density={density}
           />
         );
@@ -153,6 +156,7 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
           showIcons={true}
           isNested={true}
           pillStyle={pillStyle}
+          pillSize={pillSize}
           density={density}
         />
       );
@@ -172,6 +176,7 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
           showIcons={true}
           isNested={true}
           pillStyle={pillStyle}
+          pillSize={pillSize}
           density={density}
         />
       );
@@ -200,6 +205,7 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
           showIcons={true}
           isNested={false}
           pillStyle={pillStyle}
+          pillSize={pillSize}
           density={density}
         />
       ));
@@ -257,6 +263,7 @@ export const CategoryPillDropdowns = memo(CategoryPillDropdownsComponent, (prevP
   if (prevProps.displayMode !== nextProps.displayMode) return false;
   if (prevProps.showBadges !== nextProps.showBadges) return false;
   if (prevProps.pillStyle !== nextProps.pillStyle) return false;
+  if (prevProps.pillSize !== nextProps.pillSize) return false;
   if (prevProps.density !== nextProps.density) return false;
   if (prevProps.maxPillsPerRow !== nextProps.maxPillsPerRow) return false;
   if (prevProps.className !== nextProps.className) return false;

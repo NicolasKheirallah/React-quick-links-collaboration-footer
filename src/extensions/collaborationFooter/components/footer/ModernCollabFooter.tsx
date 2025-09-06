@@ -26,7 +26,7 @@ import { useCategories } from '../../hooks/useCategories';
 import { useSafeTimeout } from '../../hooks/useSafeTimeout';
 import { useUserSettings } from '../../hooks/useUserSettings';
 import { CategoryService } from '../../services/categoryService';
-import { ClickBehavior, SortOrder } from '../../types/UserSettings';
+import { ClickBehavior, SortOrder, BarSize } from '../../types/UserSettings';
 import { LinkManagementDialog } from '../dialogs/LinkManagementDialog';
 import { FooterActions } from './FooterActions';
 import { FooterNotifications } from './FooterNotifications';
@@ -1323,6 +1323,14 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
     }
   };
 
+  const getBarSizeClass = () => {
+    switch (userSettings.settings.barSize) {
+      case BarSize.Small: return styles.barSizeSmall;
+      case BarSize.Large: return styles.barSizeLarge;
+      default: return styles.barSizeMedium;
+    }
+  };
+
   const renderLinkBadge = (link: IContextualMenuItem): React.ReactNode => {
     return <LinkBadgeRenderer link={link} />;
   };
@@ -1392,7 +1400,7 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
   }, [userAccess.filteredOrganizationLinks, myLinks]);
 
   return (
-    <footer className={`${styles.modernFooter} ${getBannerSizeClass()}`} role="contentinfo" aria-label="Collaboration footer">
+    <footer className={`${styles.modernFooter} ${getBannerSizeClass()} ${getBarSizeClass()}`} role="contentinfo" aria-label="Collaboration footer">
       <div className={styles.footerContainer}>
         <FooterNotifications
           myLinksSaved={myLinksSaved}
@@ -1433,6 +1441,7 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
               selectedCategory={selectedCategory}
               categoryOptions={categoryDropdownOptions}
               onCategoryChange={handleCategoryChange}
+              userSettings={userSettings.settings}
             />
           </div>
         </div>

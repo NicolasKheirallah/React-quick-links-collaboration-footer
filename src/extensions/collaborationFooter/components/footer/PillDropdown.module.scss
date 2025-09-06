@@ -106,6 +106,49 @@ $easing-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1.000);
     height: 24px !important;
     gap: 3px !important;
   }
+
+  // Pill size variations
+  &.pillSizeSmall {
+    height: 20px !important;
+    padding: 2px 6px !important;
+    font-size: 10px !important;
+    
+    .pillIcon {
+      font-size: 8px !important;
+    }
+    
+    .pillText {
+      font-size: 10px !important;
+    }
+  }
+
+  &.pillSizeLarge {
+    height: 32px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    
+    .pillIcon {
+      font-size: 11px !important;
+    }
+    
+    .pillText {
+      font-size: 13px !important;
+    }
+  }
+
+  &.pillSizeMedium {
+    height: 24px !important;
+    padding: 3px 8px !important;
+    font-size: 11px !important;
+    
+    .pillIcon {
+      font-size: 9px !important;
+    }
+    
+    .pillText {
+      font-size: 11px !important;
+    }
+  }
   
   &:hover {
     background: var(--button-bg-hover);
@@ -216,6 +259,8 @@ $easing-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1.000);
   border-radius: 12px;
   min-width: 280px;
   max-width: 400px;
+  width: max-content;
+  max-width: min(400px, 80vw);
   overflow: hidden;
   animation: slideInUp $animation-duration-normal $easing-ease-out;
 }
@@ -255,6 +300,7 @@ $easing-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1.000);
 
 .dropdownContent {
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: inherit;
   
   // Custom scrollbar
@@ -624,9 +670,10 @@ $easing-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1.000);
   font-weight: 600;
   font-size: 14px;
   line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
   transition: color $animation-duration-fast $easing-ease-out;
   
   .dropdownItem:hover &,
@@ -643,9 +690,10 @@ $easing-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1.000);
   color: #605e5c;
   font-size: 12px;
   line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
   margin-top: 0;
   transition: color $animation-duration-fast $easing-ease-out;
   
@@ -741,6 +789,27 @@ $easing-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1.000);
       color: HighlightText;
     }
   }
+}
+
+/* Dropdown positioning styles */
+.dropdownPortal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.dropdownPositioned {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.dropdownMaxHeight {
+  /* Dynamic max-height will be applied via CSS variable */
+  max-height: var(--dropdown-max-height, 400px);
 }
 
 // Dark mode removed - only light theme supported

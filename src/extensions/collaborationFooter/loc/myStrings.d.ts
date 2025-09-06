@@ -210,6 +210,84 @@ declare interface ICollaborationFooterApplicationCustomizerStrings {
   FilterByCategory: string;
   SortBy: string;
   Order: string;
+  
+  // Status indicators
+  Current: string;
+  BarSize: string;
+  PillSize: string;
+  
+  // Additional display modes
+  OrganizationalPersonalDropdowns: string;
+  
+  // Admin settings
+  ShowIconsByDefault: string;
+  HideIconsByDefault: string;
+  ShowBadgesByDefault: string;
+  HideBadgesByDefault: string;
+  
+  // Dialog and Modal Titles
+  ManageQuickLinks: string;
+  SelectIcon: string;
+  UploadCustomIcon: string;
+  
+  // Placeholders
+  SearchLinksPlaceholder: string;
+  SearchIconsPlaceholder: string;
+  SearchUsersGroupsPlaceholder: string;
+  ExampleUrlPlaceholder: string;
+  
+  // Action Buttons
+  UploadImage: string;
+  RefreshData: string;
+  ExportCsv: string;
+  ClearAllData: string;
+  ValidateListsStatus: string;
+  BackToAdminPanel: string;
+  
+  // Section Headers
+  AdvancedConfiguration: string;
+  SharePointListsConfiguration: string;
+  AnalyticsDashboard: string;
+  CategoriesManagement: string;
+  
+  // Form Labels and Options
+  CustomImage: string;
+  MediumDefault: string;
+  RealTime: string;
+  EveryHour: string;
+  ManualOnly: string;
+  
+  // Status Messages
+  LoadingAnalyticsData: string;
+  LoadingCategories: string;
+  FailedToLoadSettings: string;
+  
+  // Instructions
+  ChooseOptionalLinksDescription: string;
+  LeaveEmptyShowEveryone: string;
+  
+  // Panel Headers and Labels
+  AdminSettingsCollaborationFooter: string;
+  CloseAdminPanel: string;
+  CloseUserSettingsPanel: string;
+  SaveSettings: string;
+  
+  // Settings sections
+  DisplayLayout: string;
+  PersonalPreferences: string;
+  AdvancedOptions: string;
+  
+  // Settings descriptions
+  DisplayModeDescription: string;
+  PillStyleDescription: string;
+  SpacingDensityDescription: string;
+  OverallSizeFooterBar: string;
+  SizePillElements: string;
+  ShowIconsDescription: string;
+  ShowBadgesDescription: string;
+  ClickBehaviorDescription: string;
+  MaxVisibleItemsDescription: string;
+  SortOrderDescription: string;
 }
 
 declare module 'CollaborationFooterApplicationCustomizerStrings' {
