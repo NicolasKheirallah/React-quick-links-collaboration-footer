@@ -10,9 +10,6 @@ import {
   DialogContent,
   Stack,
   Text,
-  getTheme,
-  FontWeights,
-  FontSizes,
   MessageBar,
   MessageBarType,
   Separator,
@@ -49,28 +46,31 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
   const [showMandatoryLinks, setShowMandatoryLinks] = React.useState<boolean>(true);
   
   const { setSafeTimeout } = useSafeTimeout();
-  const theme = getTheme();
 
   // Separate mandatory and optional links
-  const mandatoryLinks = globalLinks.filter(link => link.isMandatory);
-  const optionalLinks = globalLinks.filter(link => !link.isMandatory);
+  const { mandatoryLinks, optionalLinks } = React.useMemo(() => {
+    return {
+      mandatoryLinks: globalLinks.filter(link => link.isMandatory),
+      optionalLinks: globalLinks.filter(link => !link.isMandatory)
+    };
+  }, [globalLinks]);
 
   // Filter links based on search query
-  const filteredOptionalLinks = optionalLinks.filter(link =>
+  const filteredOptionalLinks = React.useMemo(() => optionalLinks.filter(link =>
     link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (link.description && link.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
     (link.category && link.category.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  ), [optionalLinks, searchQuery]);
 
   // Group filtered optional links by category
-  const optionalLinksByCategory = filteredOptionalLinks.reduce((acc, link) => {
+  const optionalLinksByCategory = React.useMemo(() => filteredOptionalLinks.reduce((acc, link) => {
     const category = link.category || 'Other';
     if (!acc[category]) {
       acc[category] = [];
     }
     acc[category].push(link);
     return acc;
-  }, {} as { [category: string]: IGlobalLink[] });
+  }, {} as { [category: string]: IGlobalLink[] }), [filteredOptionalLinks]);
 
   const handleToggleLink = React.useCallback((linkId: number) => {
     setSelectedLinks(prev => {
@@ -130,37 +130,19 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
             <div className={styles.linkIcon}>
               <Icon 
                 iconName={link.iconName || 'Link'} 
-                styles={{
-                  root: {
-                    fontSize: FontSizes.size16,
-                    color: isMandatory ? theme.palette.green : theme.palette.themePrimary,
-                  }
-                }}
               />
             </div>
             <div className={styles.linkDetails}>
               <Text 
                 variant="medium" 
-                styles={{
-                  root: {
-                    fontWeight: FontWeights.semibold,
-                    color: theme.palette.neutralPrimary,
-                    lineHeight: '20px',
-                  }
-                }}
+                className={styles.linkTitle}
               >
                 {link.title}
               </Text>
               {link.description && (
                 <Text 
                   variant="small" 
-                  styles={{
-                    root: {
-                      color: theme.palette.neutralSecondary,
-                      lineHeight: '16px',
-                      marginTop: '2px',
-                    }
-                  }}
+                  className={styles.linkDescription}
                 >
                   {link.description}
                 </Text>
@@ -168,14 +150,7 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
               {link.url && (
                 <Text 
                   variant="xSmall" 
-                  styles={{
-                    root: {
-                      color: theme.palette.neutralTertiary,
-                      lineHeight: '14px',
-                      marginTop: '4px',
-                      fontFamily: 'monospace',
-                    }
-                  }}
+                  className={styles.linkUrl}
                 >
                   {new URL(link.url).hostname}
                 </Text>
@@ -185,8 +160,8 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
           <div className={styles.linkActions}>
             {isMandatory ? (
               <div className={styles.mandatoryBadge}>
-                <Icon iconName="LockSolid" styles={{ root: { fontSize: FontSizes.size12, marginRight: '4px' } }} />
-                <Text variant="xSmall" styles={{ root: { fontWeight: FontWeights.semibold } }}>
+                <Icon iconName="LockSolid" className={styles.sectionIcon} styles={{ root: { fontSize: 12, marginRight: 4 } }} />
+                <Text variant="xSmall" className={styles.requiredLabel}>
                   Required
                 </Text>
               </div>
@@ -194,14 +169,6 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
               <Checkbox
                 checked={isSelected}
                 onChange={() => handleToggleLink(link.id)}
-                styles={{
-                  checkbox: {
-                    borderRadius: '4px',
-                  },
-                  checkmark: {
-                    color: theme.palette.white,
-                  }
-                }}
                 ariaLabel={`Toggle ${link.title}`}
               />
             )}
@@ -209,7 +176,7 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
         </div>
       </div>
     );
-  }, [theme, handleToggleLink]);
+  }, [handleToggleLink]);
 
   const renderCategory = React.useCallback((categoryName: string, categoryLinks: IGlobalLink[]) => {
     const selectedInCategory = categoryLinks.filter(link => selectedLinks.has(link.id)).length;
@@ -224,33 +191,18 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
               checked={allSelected}
               indeterminate={someSelected}
               onChange={(_, checked) => handleSelectAllInCategory(categoryLinks, checked || false)}
-              styles={{
-                checkbox: {
-                  borderRadius: '4px',
-                },
-              }}
               ariaLabel={`Select all links in ${categoryName}`}
             />
             <div className={styles.categoryInfo}>
               <Text 
                 variant="mediumPlus" 
-                styles={{
-                  root: {
-                    fontWeight: FontWeights.semibold,
-                    color: theme.palette.neutralPrimary,
-                  }
-                }}
+                className={styles.categoryTitle}
               >
                 {categoryName}
               </Text>
               <Text 
                 variant="small" 
-                styles={{
-                  root: {
-                    color: theme.palette.neutralSecondary,
-                    marginTop: '2px',
-                  }
-                }}
+                className={styles.categoryCount}
               >
                 {selectedInCategory} of {categoryLinks.length} selected
               </Text>
@@ -262,33 +214,15 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
         </div>
       </div>
     );
-  }, [selectedLinks, handleSelectAllInCategory, renderLinkCard, theme]);
+  }, [selectedLinks, handleSelectAllInCategory, renderLinkCard]);
 
   return (
     <div className={styles.dialogContainer}>
       <DialogContent
-        title="Manage Quick Links"
+        title={<div className={styles.dialogTitle}>Manage Quick Links</div>}
         onDismiss={onCancel}
         showCloseButton={true}
-        styles={{
-          content: {
-            maxWidth: '800px',
-            width: '90vw',
-            maxHeight: '90vh',
-            padding: 0,
-          },
-          header: {
-            padding: '24px 24px 0 24px',
-          },
-          inner: {
-            padding: 0,
-          },
-          title: {
-            fontSize: FontSizes.size24,
-            fontWeight: FontWeights.semibold,
-            color: theme.palette.neutralPrimary,
-          }
-        }}
+        className={styles.dialogContent}
       >
         <div className={styles.dialogContent}>
           {/* Status messages */}
@@ -301,19 +235,14 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
                   setErrorMessage(null);
                   setSuccessMessage(null);
                 }}
-                styles={{
-                  root: {
-                    borderRadius: '6px',
-                  }
-                }}
               >
                 <Stack horizontal tokens={{ childrenGap: 8 }} verticalAlign="center">
                   <Icon 
                     iconName={errorMessage ? 'ErrorBadge' : 'CompletedSolid'} 
                     styles={{
                       root: {
-                        fontSize: FontSizes.size16,
-                        color: errorMessage ? theme.palette.red : theme.palette.green,
+                        fontSize: 16,
+                        color: errorMessage ? '#a4262c' : '#107c10', // Fallback/Theme colors
                       }
                     }}
                   />
@@ -330,58 +259,23 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
             <Stack tokens={{ childrenGap: 16 }}>
               <Text 
                 variant="medium" 
-                styles={{
-                  root: {
-                    color: theme.palette.neutralSecondary,
-                    lineHeight: '20px',
-                  }
-                }}
+                className={styles.headerDescription}
               >
                 Choose which optional links appear in your quick links. Required links are always shown.
               </Text>
               
               <Stack horizontal tokens={{ childrenGap: 16 }} verticalAlign="center" wrap>
-                <div style={{ flex: 1, minWidth: '200px' }}>
+                <div className={styles.searchBoxContainer}>
                   <SearchBox
                     placeholder="Search links..."
                     value={searchQuery}
                     onChange={(_, newValue) => setSearchQuery(newValue || '')}
-                    styles={{
-                      root: {
-                        maxWidth: '300px',
-                        height: '32px',
-                        display: 'flex',
-                        alignItems: 'center'
-                      },
-                      field: {
-                        height: '32px',
-                        minHeight: '32px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        backgroundColor: '#ffffff',
-                        border: '1px solid #d1d1d1',
-                        borderRadius: '4px',
-                        selectors: {
-                          ':hover': {
-                            border: '1px solid #106ebe'
-                          },
-                          ':focus-within': {
-                            border: '1px solid #0078d4'
-                          }
-                        }
-                      }
-                    }}
                   />
                 </div>
                 <Toggle
                   label="Show required links"
                   checked={showMandatoryLinks}
                   onChange={(_, checked) => setShowMandatoryLinks(checked || false)}
-                  styles={{
-                    container: {
-                      marginTop: 0,
-                    }
-                  }}
                 />
               </Stack>
             </Stack>
@@ -396,21 +290,11 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
                   <Stack horizontal verticalAlign="center" tokens={{ childrenGap: 8 }}>
                     <Icon 
                       iconName="LockSolid" 
-                      styles={{
-                        root: {
-                          fontSize: FontSizes.size16,
-                          color: theme.palette.green,
-                        }
-                      }}
+                      className={`${styles.sectionIcon} ${styles.mandatory}`}
                     />
                     <Text 
                       variant="large" 
-                      styles={{
-                        root: {
-                          fontWeight: FontWeights.semibold,
-                          color: theme.palette.neutralPrimary,
-                        }
-                      }}
+                      className={styles.sectionHeaderTitle}
                     >
                       Required Links ({mandatoryLinks.length})
                     </Text>
@@ -419,7 +303,7 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
                 <div className={styles.linksGrid}>
                   {mandatoryLinks.map(link => renderLinkCard(link, true, true))}
                 </div>
-                {optionalLinks.length > 0 && <Separator styles={{ root: { margin: '24px 0' } }} />}
+                {optionalLinks.length > 0 && <Separator className={styles.separator} />}
               </div>
             )}
 
@@ -431,32 +315,18 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
                     <Stack horizontal verticalAlign="center" tokens={{ childrenGap: 8 }}>
                       <Icon 
                         iconName="CheckboxComposite" 
-                        styles={{
-                          root: {
-                            fontSize: FontSizes.size16,
-                            color: theme.palette.themePrimary,
-                          }
-                        }}
+                        className={styles.sectionIcon}
                       />
                       <Text 
                         variant="large" 
-                        styles={{
-                          root: {
-                            fontWeight: FontWeights.semibold,
-                            color: theme.palette.neutralPrimary,
-                          }
-                        }}
+                        className={styles.sectionHeaderTitle}
                       >
                         Optional Links
                       </Text>
                     </Stack>
                     <Text 
                       variant="medium" 
-                      styles={{
-                        root: {
-                          color: theme.palette.neutralSecondary,
-                        }
-                      }}
+                      className={styles.selectionCount}
                     >
                       {selectedLinks.size} selected
                     </Text>
@@ -472,21 +342,11 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
                     <Stack horizontalAlign="center" tokens={{ childrenGap: 16 }}>
                       <Icon 
                         iconName="Search" 
-                        styles={{
-                          root: {
-                            fontSize: '32px',
-                            color: theme.palette.neutralTertiary,
-                          }
-                        }}
+                        className={styles.emptyStateIcon}
                       />
                       <Text 
                         variant="large" 
-                        styles={{
-                          root: {
-                            color: theme.palette.neutralSecondary,
-                            textAlign: 'center',
-                          }
-                        }}
+                        className={styles.emptyStateText}
                       >
                         No links found matching "{searchQuery}"
                       </Text>
@@ -502,11 +362,7 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
           <Stack horizontal horizontalAlign="space-between" verticalAlign="center" styles={{ root: { width: '100%' } }}>
             <Text 
               variant="small" 
-              styles={{
-                root: {
-                  color: theme.palette.neutralSecondary,
-                }
-              }}
+              className={styles.dialogFooterText}
             >
               {`${selectedLinks.size} optional link${selectedLinks.size !== 1 ? 's' : ''} selected`}
             </Text>
@@ -525,7 +381,7 @@ const ModernLinkSelectionDialogContent: React.FC<IModernLinkSelectionDialogConte
                 {isLoading && (
                   <Spinner 
                     size={SpinnerSize.xSmall} 
-                    styles={{ root: { marginRight: '8px' } }}
+                    className={styles.footerSpinner}
                   />
                 )}
               </PrimaryButton>

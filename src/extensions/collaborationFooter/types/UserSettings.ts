@@ -12,11 +12,22 @@ export enum DisplayMode {
   TypeBasedDropdowns = 'type-based-dropdowns'
 }
 
+
+export enum BarLayout {
+  FullWidth = 'full-width',
+  FloatingDock = 'floating-dock'
+}
+
 export enum PillStyle {
   Rounded = 'rounded',
   Square = 'square',
-  Minimal = 'minimal'
+  Minimal = 'minimal',
+  Glass = 'glass',
+  Filled = 'filled',
+  Gradient = 'gradient',
+  Neon = 'neon'
 }
+
 
 export enum Density {
   Compact = 'compact',
@@ -34,6 +45,14 @@ export enum PillSize {
   Small = 'small',
   Medium = 'medium',
   Large = 'large'
+}
+
+
+export enum FontSize {
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large',
+  XLarge = 'xlarge'
 }
 
 export enum SortOrder {
@@ -54,8 +73,11 @@ export interface IUserSettings {
   displayMode: DisplayMode;
   pillStyle: PillStyle;
   pillSize: PillSize;
+  fontSize: FontSize;
   density: Density;
   barSize: BarSize;
+  barLayout: BarLayout;
+  
   
   // Icon and Badge Settings
   showIcons: boolean;
@@ -93,8 +115,11 @@ export const DEFAULT_USER_SETTINGS: IUserSettings = {
   displayMode: DisplayMode.OrgPersonalDropdowns,
   pillStyle: PillStyle.Rounded,
   pillSize: PillSize.Medium,
+  fontSize: FontSize.Medium,
   density: Density.Normal,
   barSize: BarSize.Medium,
+  barLayout: BarLayout.FullWidth,
+  
   
   // Icon and Badge Settings  
   showIcons: true,

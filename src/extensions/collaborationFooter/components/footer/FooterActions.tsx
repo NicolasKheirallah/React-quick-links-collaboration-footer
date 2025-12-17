@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { memo } from 'react';
 import { Icon } from '@fluentui/react/lib/Icon';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import { IUserSettings, BarSize } from '../../types/UserSettings';
 import styles from './ModernCollabFooter.module.scss';
 
@@ -45,8 +46,8 @@ export const FooterActions: React.FC<IFooterActionsProps> = ({
       <button
         className={buttonClass}
         onClick={toggleSearch}
-        title="Search Links"
-        aria-label="Search Links"
+        title={strings.SearchLinks}
+        aria-label={strings.SearchLinks}
       >
         <Icon 
           iconName={showSearch ? 'Cancel' : 'Search'} 
@@ -56,26 +57,29 @@ export const FooterActions: React.FC<IFooterActionsProps> = ({
       <button
         className={buttonClass}
         onClick={handleUserSettings}
-        title="User Settings"
-        aria-label="Open user settings panel"
+        title={strings.UserSettings}
+        aria-label={strings.OpenUserSettingsPanelAriaLabel}
       >
         <Icon 
           iconName="Settings" 
           className={`${styles.buttonIcon} ${styles.primaryColorIcon}`}
         />
       </button>
-      <button
-        className={buttonClass}
-        onClick={handleUnifiedLinkManagement}
-        disabled={isLoading}
-        title="Manage My Links"
-        aria-label="Manage personal links and select organization links"
-      >
-        <Icon 
-          iconName={isLoading ? 'ProgressRingDots' : 'EditNote'} 
-          className={styles.buttonIcon}
-        />
-      </button>
+
+      {userSettings.enableQuickAdd && (
+        <button
+          className={buttonClass}
+          onClick={handleUnifiedLinkManagement}
+          disabled={isLoading}
+          title={strings.ManageLinks}
+          aria-label={strings.ManageLinksAriaLabel}
+        >
+          <Icon 
+            iconName={isLoading ? 'ProgressRingDots' : 'EditNote'} 
+            className={styles.buttonIcon}
+          />
+        </button>
+      )}
     </div>
   );
 };

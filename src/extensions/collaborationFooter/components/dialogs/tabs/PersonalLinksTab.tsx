@@ -30,6 +30,7 @@ export interface IPersonalLinksTabProps {
   footerService?: any; // For direct persistence
   onCreateCategory?: (categoryName: string) => Promise<boolean>;
   onCategoriesRefresh?: () => Promise<void>;
+  enableAutoCategories?: boolean;
 }
 
 export const PersonalLinksTab: React.FC<IPersonalLinksTabProps> = ({
@@ -48,7 +49,8 @@ export const PersonalLinksTab: React.FC<IPersonalLinksTabProps> = ({
   onSaveLinks,
   footerService,
   onCreateCategory,
-  onCategoriesRefresh
+  onCategoriesRefresh,
+  enableAutoCategories
 }) => {
   const bulkSelection = useBulkSelection();
 
@@ -272,6 +274,7 @@ export const PersonalLinksTab: React.FC<IPersonalLinksTabProps> = ({
           isEditMode={!!newLinkFormData.id}
           onCreateCategory={onCreateCategory}
           onCategoriesRefresh={onCategoriesRefresh}
+          enableAutoCategories={enableAutoCategories}
         />
       )}
     </div>

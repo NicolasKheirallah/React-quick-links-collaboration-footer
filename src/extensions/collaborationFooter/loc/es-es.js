@@ -166,6 +166,42 @@ define([], function() {
     "CategoryAlreadyExists": "La categoría ya existe",
     "LinkAlreadyExists": "El enlace ya existe",
     "FieldTooLong": "El campo es demasiado largo",
-    "FieldTooShort": "El campo es demasiado corto"
+    "FieldTooShort": "El campo es demasiado corto",
+    
+    // New Form Strings
+    "None": "(Ninguno)",
+    "Reset": "Restablecer",
+    "NewCategoryName": "Nuevo nombre de categoría",
+    "SubCategoryLabel": "Subcategoría (Opcional)",
+    "SubCategoryPlaceholder": "Seleccionar subcategoría...",
+    "NewSubCategoryName": "Nuevo nombre de subcategoría",
+    "CategoryLabel": "Categoría",
+    
+    // New Admin Strings
+    "GlobalLinksListTitleLabel": "Título de la lista de enlaces globales",
+    "GlobalLinksListTitleDesc": "Nombre de la lista SharePoint para enlaces globales",
+    "OneDriveUserStorageTitle": "Almacenamiento OneDrive del usuario",
+    "EnableUserSelectionStorageLabel": "Habilitar almacenamiento de selección de usuario",
+    "StoreInOneDrive": "Almacenar en OneDrive",
+    "UseSharePointLists": "Usar listas SharePoint",
+    "UserSelectionStorageDesc": "Cuando está habilitado, las selecciones de enlaces y preferencias del usuario se almacenan como archivos JSON en su OneDrive para sincronización entre dispositivos.",
+    "SharePointListsManagement": "Gestión de listas SharePoint",
+    "GlobalLinksListReady": "Lista de enlaces globales lista",
+    "UserSelectionsListReady": "Lista de selecciones de usuario lista",
+    "LastChecked": "Última verificación:",
+    "GlobalLinksListFound": "Lista de enlaces globales: Encontrada",
+    "GlobalLinksListMissing": "Lista de enlaces globales: No encontrada",
+    "UserSelectionsListFound": "Lista de selecciones de usuario: Encontrada",
+    "UserSelectionsListMissing": "Lista de selecciones de usuario: No encontrada",
+    
+    // Aria Labels
+    "OpenUserSettingsPanelAriaLabel": "Abrir panel de configuración de usuario",
+    "ManageLinksAriaLabel": "Gestionar enlaces personales y seleccionar enlaces de organización",
+    
+    // Dynamic Messages
+    "ImportedLinksSuccess": "¡{0} enlaces importados exitosamente a la lista SharePoint!",
+    "ImportedLinksFailure": "{0} enlaces no pudieron importarse. Por favor revise la consola para más detalles.",
+    "CategoryCreatedSuccess": "¡Categoría \"{0}\" creada exitosamente!",
+    "CategoryCreationFailure": "Error al crear categoría: {0}"
   };
 });

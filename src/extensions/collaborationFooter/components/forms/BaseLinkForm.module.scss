@@ -90,3 +90,19 @@
   border-top: 1px solid var(--neutralLight);
   margin-top: 8px;
 }
+
+.categorySection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.customCategoryInputGroup {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end; /* Align Cancel button with input text */
+}
+
+.customCategoryInputGroup :global(.ms-TextField) {
+  flex: 1;
+}

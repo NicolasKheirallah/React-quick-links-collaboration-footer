@@ -156,28 +156,46 @@ export class HybridFooterService implements IFooterService {
   /**
    * Initialize both services
    */
-  public async initialize(): Promise<void> {
+  /**
+   * Initialize both services
+   */
+  public async initialize(): Promise<{ status: 'success' | 'partial' | 'failure'; details: { oneDrive: boolean; sharePoint: boolean; error?: string } }> {
+    const details = { oneDrive: false, sharePoint: false };
+    
     try {
       Log.info(LOG_SOURCE, 'Initializing hybrid footer service');
       
       // Initialize services with individual error handling
-      const oneDrivePromise = this.oneDriveService.initialize().catch(error => {
-        Log.warn(LOG_SOURCE, `OneDrive service initialization failed: ${(error as Error).message}`);
-        return Promise.resolve(); // Continue even if OneDrive fails
-      });
+      const oneDrivePromise = this.oneDriveService.initialize()
+        .then(() => { details.oneDrive = true; })
+        .catch(error => {
+          Log.warn(LOG_SOURCE, `OneDrive service initialization failed: ${(error as Error).message}`);
+        });
 
-      const globalLinksPromise = this.globalLinksService.initialize().catch(error => {
-        Log.warn(LOG_SOURCE, `Global links service initialization failed: ${(error as Error).message}`);
-        return Promise.resolve(); // Continue even if global links fail
-      });
+      const globalLinksPromise = this.globalLinksService.initialize()
+        .then(() => { details.sharePoint = true; })
+        .catch(error => {
+          Log.warn(LOG_SOURCE, `Global links service initialization failed: ${(error as Error).message}`);
+        });
 
       await Promise.all([oneDrivePromise, globalLinksPromise]);
 
-      Log.info(LOG_SOURCE, 'Hybrid footer service initialization completed (some services may have warnings)');
+      if (details.oneDrive && details.sharePoint) {
+        Log.info(LOG_SOURCE, 'Hybrid footer service initialization completed successfully');
+        return { status: 'success', details };
+      } else if (details.oneDrive || details.sharePoint) {
+        Log.warn(LOG_SOURCE, 'Hybrid footer service initialization completed with warnings');
+        return { status: 'partial', details };
+      } else {
+        Log.error(LOG_SOURCE, new Error('All hybrid services failed to initialize'));
+        return { status: 'failure', details };
+      }
     } catch (error) {
       Log.error(LOG_SOURCE, error as Error);
-      // Don't throw - allow the application to continue with degraded functionality
-      Log.warn(LOG_SOURCE, 'Hybrid footer service will continue with limited functionality');
+      return { 
+        status: 'failure', 
+        details: { ...details, error: (error as Error).message } 
+      };
     }
   }
 

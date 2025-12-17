@@ -47,53 +47,164 @@ export const BaseLinkForm = <T extends IBaseLinkFormData = IBaseLinkFormData>({
   onCreateCategory,
   onCategoriesRefresh
 }: IBaseLinkFormProps<T>) => {
-  const [showCustomCategoryInput, setShowCustomCategoryInput] = useState<boolean>(false);
-  const [customCategory, setCustomCategory] = useState<string>('');
+  // State for split category selection
+  const [selectedParent, setSelectedParent] = useState<string>('');
+  const [selectedChild, setSelectedChild] = useState<string>('');
+  const [isCreatingParent, setIsCreatingParent] = useState<boolean>(false);
+  const [isCreatingChild, setIsCreatingChild] = useState<boolean>(false);
+  const [customParentInput, setCustomParentInput] = useState<string>('');
+  const [customChildInput, setCustomChildInput] = useState<string>('');
 
-  const handleSave = useCallback(() => {
-    if (!formData.title.trim() || !formData.url.trim() || !LinkValidationService.isValidUrl(formData.url)) {
-      return;
-    }
-    onSave(formData);
-  }, [formData, onSave]);
+  // 1. Data Parsing: Group available categories into Parent -> Children map
+  const categoryMap = React.useMemo(() => {
+    const map = new Map<string, string[]>();
+    
+    availableCategories.forEach(cat => {
+      // Assuming "Parent: Child" format
+      if (cat.key === 'custom') return; // Skip the 'create new' option if passed from parent
+      
+      const parts = cat.text.split(':').map(s => s.trim());
+      const parent = parts[0];
+      const child = parts.length > 1 ? parts.slice(1).join(': ') : null;
 
-  const handleCategoryChange = useCallback((_, option) => {
-    if (option?.key === 'custom') {
-      setShowCustomCategoryInput(true);
-      setCustomCategory('');
+      if (!map.has(parent)) {
+        map.set(parent, []);
+      }
+      
+      if (child) {
+        map.get(parent)?.push(child);
+      }
+    });
+    return map;
+  }, [availableCategories]);
+
+  // Initial load: Parse existing formData.category into parent/child
+  React.useEffect(() => {
+    if (formData.category) {
+      const parts = formData.category.split(':').map(s => s.trim());
+      const parent = parts[0];
+      const child = parts.length > 1 ? parts.slice(1).join(': ') : '';
+      
+      // Only update if we aren't in the middle of creating/editing to avoid overwriting user input
+      // Ideally, we only do this on mount or if formData.category changes externally
+      setSelectedParent(parent);
+      setSelectedChild(child);
     } else {
-      setShowCustomCategoryInput(false);
-      onFormDataChange({ ...formData, category: option?.key as string || 'General' });
+        setSelectedParent('');
+        setSelectedChild('');
+    }
+  }, [formData.category]);
+
+  const handleParentChange = useCallback((_, option) => {
+    if (option?.key === 'create_new_parent') {
+      setIsCreatingParent(true);
+      setSelectedParent('');
+      setCustomParentInput('');
+      // Reset child
+      setSelectedChild('');
+      setIsCreatingChild(false);
+      setCustomChildInput('');
+    } else {
+      setIsCreatingParent(false);
+      setSelectedParent(option?.text || '');
+      // When parent changes, reset child
+      setSelectedChild('');
+      setIsCreatingChild(false);
+      setCustomChildInput('');
+      
+      // Update form data immediately with just the parent (child is empty)
+      onFormDataChange({ ...formData, category: option?.text || 'General' });
     }
   }, [formData, onFormDataChange]);
 
-  const handleAddCustomCategory = useCallback(async () => {
-    if (!customCategory.trim()) return;
-    
-    const newCategoryName = customCategory.trim();
-    
-    try {
-      if (onCreateCategory) {
-        const success = await onCreateCategory(newCategoryName);
-        if (success) {
-          if (onCategoriesRefresh) {
-            await onCategoriesRefresh();
-          }
-          onFormDataChange({ ...formData, category: newCategoryName });
-          setShowCustomCategoryInput(false);
-          setCustomCategory('');
-        }
-      } else {
-        onFormDataChange({ ...formData, category: newCategoryName });
-        setShowCustomCategoryInput(false);
-        setCustomCategory('');
-      }
-    } catch (error) {
-      onFormDataChange({ ...formData, category: newCategoryName });
-      setShowCustomCategoryInput(false);
-      setCustomCategory('');
+  const handleChildChange = useCallback((_, option) => {
+    if (option?.key === 'create_new_child') {
+      setIsCreatingChild(true);
+      setSelectedChild('');
+      setCustomChildInput('');
+      setCustomParentInput(''); // Ensure we aren't creating a parent
+    } else if (option?.key === 'none_child') {
+      setIsCreatingChild(false);
+      setSelectedChild('');
+      setCustomChildInput('');
+      // Update form data to match just the parent
+      onFormDataChange({ ...formData, category: selectedParent });
+    } else {
+      setIsCreatingChild(false);
+      const childVal = option?.text || '';
+      setSelectedChild(childVal);
+      // Update form data
+      onFormDataChange({ ...formData, category: `${selectedParent}: ${childVal}` });
     }
-  }, [customCategory, formData, onFormDataChange, onCreateCategory, onCategoriesRefresh]);
+  }, [formData, onFormDataChange, selectedParent]);
+
+  // Handle saving "New Parent" input
+  const handleCustomParentBlur = () => {
+    if (customParentInput.trim()) {
+       setSelectedParent(customParentInput.trim());
+       onFormDataChange({ ...formData, category: customParentInput.trim() });
+    }
+  };
+
+  // Handle saving "New Child" input
+  const handleCustomChildBlur = () => {
+    if (customChildInput.trim()) {
+        setSelectedChild(customChildInput.trim());
+        onFormDataChange({ ...formData, category: `${selectedParent}: ${customChildInput.trim()}` });
+    }
+  };
+
+
+  const handleSave = useCallback(() => {
+    // Final validations? The formData.category is updated on every change above.
+    // If "Creating Parent" is active, ensure we use the input value
+    let finalCategory = formData.category;
+
+    if (isCreatingParent && customParentInput.trim()) {
+        finalCategory = customParentInput.trim();
+        if (isCreatingChild && customChildInput.trim()) {
+            finalCategory += `: ${customChildInput.trim()}`;
+        }
+    } else if (selectedParent) {
+         finalCategory = selectedParent;
+         if (isCreatingChild && customChildInput.trim()) {
+             finalCategory += `: ${customChildInput.trim()}`;
+         } else if (selectedChild) {
+             finalCategory += `: ${selectedChild}`;
+         }
+    }
+
+    // Update for sanity before saving
+    const finalData = { ...formData, category: finalCategory };
+
+    if (!finalData.title.trim() || !finalData.url.trim() || !LinkValidationService.isValidUrl(finalData.url)) {
+      return;
+    }
+    onSave(finalData);
+  }, [formData, onSave, isCreatingParent, customParentInput, isCreatingChild, customChildInput, selectedParent, selectedChild]);
+
+  // derived options
+  const parentOptions = React.useMemo(() => {
+    const opts = Array.from(categoryMap.keys()).map(p => ({ key: p, text: p }));
+    opts.push({ key: 'create_new_parent', text: `+ ${strings.CreateCategory}` });
+    return opts;
+  }, [categoryMap]);
+
+  const childOptions = React.useMemo(() => {
+    if (!selectedParent || isCreatingParent) return [];
+    
+    const children = categoryMap.get(selectedParent) || [];
+    const opts = children.map(c => ({ key: c, text: c }));
+    
+    // Add "None" option if there are children, to allow selecting just the parent
+    if (children.length > 0) {
+        opts.unshift({ key: 'none_child', text: strings.None || '(None)' });
+    }
+    
+    opts.push({ key: 'create_new_child', text: `+ ${strings.CreateCategory}` }); // Reusing strings.CreateCategory ("Create Category") or maybe hardcode "Create Subcategory"
+    return opts;
+  }, [categoryMap, selectedParent, isCreatingParent]);
+
 
   return (
     <div className={styles.baseLinkForm}>
@@ -125,41 +236,63 @@ export const BaseLinkForm = <T extends IBaseLinkFormData = IBaseLinkFormData>({
           onChange={(_, value) => onFormDataChange({ ...formData, description: value || '' })}
         />
         
-        <Dropdown
-          label={strings.LinkCategory}
-          selectedKey={showCustomCategoryInput ? 'custom' : formData.category}
-          onChange={handleCategoryChange}
-          options={[
-            ...availableCategories,
-            { key: 'custom', text: `+ ${strings.CreateCategory}` }
-          ]}
-        />
-        
-        {showCustomCategoryInput && (
-          <div className={styles.customCategorySection}>
-            <TextField
-              label={strings.CategoryName}
-              placeholder={strings.CategoryName}
-              value={customCategory}
-              onChange={(_, value) => setCustomCategory(value || '')}
-              styles={{ root: { flex: 1 } }}
-            />
-            <div className={styles.customCategoryActions}>
-              <PrimaryButton
-                text={strings.Add}
-                onClick={handleAddCustomCategory}
-                disabled={!customCategory.trim()}
-              />
-              <DefaultButton
-                text={strings.Cancel}
-                onClick={() => {
-                  setShowCustomCategoryInput(false);
-                  setCustomCategory('');
-                }}
-              />
-            </div>
-          </div>
-        )}
+        {/* ---- CATEGORY SECTION ---- */}
+        <div className={styles.categorySection}>
+             {/* 1. PARENT SELECTION */}
+             {!isCreatingParent ? (
+                <Dropdown
+                    label={strings.CategoryLabel}
+                    selectedKey={selectedParent}
+                    onChange={handleParentChange}
+                    options={parentOptions}
+                />
+             ) : (
+                <div className={styles.customCategoryInputGroup}>
+                    <TextField
+                        label={strings.NewCategoryName}
+                        value={customParentInput}
+                        onChange={(_, v) => setCustomParentInput(v || '')}
+                        onBlur={handleCustomParentBlur}
+                        autoFocus
+                    />
+                    <DefaultButton 
+                        text={strings.Cancel}
+                        onClick={() => setIsCreatingParent(false)}
+                        styles={{ root: { marginTop: '28px' } }} // Align with input
+                    />
+                </div>
+             )}
+
+             {/* 2. SUB-CATEGORY SELECTION (Only if parent selected) */}
+             {(selectedParent && !isCreatingParent) && (
+                 <div style={{ marginTop: '12px', paddingLeft: '16px', borderLeft: '2px solid #eaeaea' }}>
+                     {!isCreatingChild ? (
+                        <Dropdown
+                            label={strings.SubCategoryLabel}
+                            placeholder={strings.SubCategoryPlaceholder}
+                            selectedKey={selectedChild}
+                            onChange={handleChildChange}
+                            options={childOptions}
+                        />
+                     ) : (
+                        <div className={styles.customCategoryInputGroup}>
+                            <TextField
+                                label={strings.NewSubCategoryName}
+                                value={customChildInput}
+                                onChange={(_, v) => setCustomChildInput(v || '')}
+                                onBlur={handleCustomChildBlur}
+                                autoFocus
+                            />
+                            <DefaultButton 
+                                text={strings.Cancel} 
+                                onClick={() => setIsCreatingChild(false)} 
+                                styles={{ root: { marginTop: '28px' } }}
+                            />
+                        </div>
+                     )}
+                 </div>
+             )}
+        </div>
         
         <div className={styles.iconSection}>
           <label className={styles.iconLabel}>Icon</label>
@@ -174,7 +307,7 @@ export const BaseLinkForm = <T extends IBaseLinkFormData = IBaseLinkFormData>({
               <Icon iconName={formData.iconName || 'Link'} className={styles.iconFluentUI} />
             )}
             <span className={styles.iconName}>
-              {formData.iconUrl ? 'Custom Image' : formData.iconName || 'Link'}
+              {formData.iconUrl ? strings.CustomImage : formData.iconName || 'Link'}
             </span>
             <DefaultButton
               text={strings.LinkIcon}

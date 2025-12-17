@@ -6,6 +6,7 @@ import { DefaultButton } from '@fluentui/react/lib/Button';
 import { Stack } from '@fluentui/react/lib/Stack';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { useTheme } from '@fluentui/react/lib/Theme';
+import * as strings from 'CollaborationFooterApplicationCustomizerStrings';
 import styles from './SharePointConfigSection.module.scss';
 
 export interface IListValidationStatus {
@@ -39,27 +40,27 @@ export const SharePointConfigSection: React.FC<ISharePointConfigSectionProps> = 
   return (
     <div className={styles.sharePointConfigSection}>
       <div className={styles.adminSection}>
-        <Text variant="large" className={styles.sectionTitle}>SharePoint Lists Configuration</Text>
+        <Text variant="large" className={styles.sectionTitle}>{strings.SharePointListsConfiguration}</Text>
         <TextField
-          label="Global Links List Title"
+          label={strings.GlobalLinksListTitleLabel}
           value={adminSettings.globalLinksListTitle}
           onChange={(_, value) => onAdminSettingChange('globalLinksListTitle', value || '')}
-          description="Name of the SharePoint list for global links"
+          description={strings.GlobalLinksListTitleDesc}
         />
       </div>
 
       <div className={styles.adminSection}>
-        <Text variant="large" className={styles.sectionTitle}>OneDrive User Storage</Text>
+        <Text variant="large" className={styles.sectionTitle}>{strings.OneDriveUserStorageTitle}</Text>
         <Toggle
-          label="Enable User Selection Storage"
+          label={strings.EnableUserSelectionStorageLabel}
           checked={adminSettings.enableUserSelectionStorage}
           onChange={(_, checked) => onAdminSettingChange('enableUserSelectionStorage', checked)}
-          onText="Store in OneDrive"
-          offText="Use SharePoint Lists"
+          onText={strings.StoreInOneDrive}
+          offText={strings.UseSharePointLists}
           styles={{ root: { marginBottom: '16px' } }}
         />
         <p style={{ fontSize: '12px', color: theme.palette.neutralSecondary }}>
-          When enabled, user link selections and preferences are stored as JSON files in their OneDrive for cross-device sync.
+          {strings.UserSelectionStorageDesc}
         </p>
       </div>
 
@@ -68,12 +69,12 @@ export const SharePointConfigSection: React.FC<ISharePointConfigSectionProps> = 
         <div className={styles.adminSection}>
           <Text variant="large" className={styles.sectionTitle}>
             <Icon iconName="SharePointLogo" style={{ marginRight: '8px' }} />
-            SharePoint Lists Management
+            {strings.SharePointListsManagement}
           </Text>
           <Stack tokens={{ childrenGap: 12 }}>
             {onCreateGlobalLinksList && (
               <DefaultButton
-                text={listValidationStatus.globalLinksExists ? "✓ Global Links List Ready" : "Create Global Links List"}
+                text={listValidationStatus.globalLinksExists ? strings.GlobalLinksListReady : strings.CreateGlobalLinksList}
                 iconProps={{ iconName: listValidationStatus.globalLinksExists ? 'CheckMark' : 'Add' }}
                 disabled={listValidationStatus.globalLinksExists || listValidationStatus.isValidating || isLoading}
                 onClick={onCreateGlobalLinksList}
@@ -87,7 +88,7 @@ export const SharePointConfigSection: React.FC<ISharePointConfigSectionProps> = 
             )}
             {onCreateUserSelectionsList && (
               <DefaultButton
-                text={listValidationStatus.userSelectionsExists ? "✓ User Selections List Ready" : "Create User Selections List"}
+                text={listValidationStatus.userSelectionsExists ? strings.UserSelectionsListReady : strings.CreateUserSelectionsList}
                 iconProps={{ iconName: listValidationStatus.userSelectionsExists ? 'CheckMark' : 'Add' }}
                 disabled={listValidationStatus.userSelectionsExists || listValidationStatus.isValidating || isLoading}
                 onClick={onCreateUserSelectionsList}
@@ -109,7 +110,7 @@ export const SharePointConfigSection: React.FC<ISharePointConfigSectionProps> = 
             )}
             {listValidationStatus.lastChecked && (
               <Text variant="small" style={{ color: theme.palette.neutralSecondary, fontStyle: 'italic' }}>
-                Last checked: {listValidationStatus.lastChecked.toLocaleTimeString()}
+                {strings.LastChecked} {listValidationStatus.lastChecked.toLocaleTimeString()}
               </Text>
             )}
           </Stack>

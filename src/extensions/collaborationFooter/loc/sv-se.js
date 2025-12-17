@@ -166,6 +166,42 @@ define([], function() {
     "CategoryAlreadyExists": "Kategorin finns redan",
     "LinkAlreadyExists": "Länken finns redan",
     "FieldTooLong": "Fältet är för långt",
-    "FieldTooShort": "Fältet är för kort"
+    "FieldTooShort": "Fältet är för kort",
+    
+    // New Form Strings
+    "None": "(Ingen)",
+    "Reset": "Återställ",
+    "NewCategoryName": "Nytt kategorinamn",
+    "SubCategoryLabel": "Underkategori (Valfritt)",
+    "SubCategoryPlaceholder": "Välj underkategori...",
+    "NewSubCategoryName": "Nytt underkategorinamn",
+    "CategoryLabel": "Kategori",
+    
+    // New Admin Strings
+    "GlobalLinksListTitleLabel": "Global Länklista Titel",
+    "GlobalLinksListTitleDesc": "Namn på SharePoint-listan för globala länkar",
+    "OneDriveUserStorageTitle": "OneDrive Användarlagring",
+    "EnableUserSelectionStorageLabel": "Aktivera Användarvallagring",
+    "StoreInOneDrive": "Lagra i OneDrive",
+    "UseSharePointLists": "Använd SharePoint-listor",
+    "UserSelectionStorageDesc": "När aktiverat lagras användarens länkval och inställningar som JSON-filer i deras OneDrive för synkronisering mellan enheter.",
+    "SharePointListsManagement": "SharePoint-listhantering",
+    "GlobalLinksListReady": "Global Länklista Redo",
+    "UserSelectionsListReady": "Användarvallista Redo",
+    "LastChecked": "Senast kontrollerad:",
+    "GlobalLinksListFound": "Global Länklista: Hittad",
+    "GlobalLinksListMissing": "Global Länklista: Saknas",
+    "UserSelectionsListFound": "Användarvallista: Hittad",
+    "UserSelectionsListMissing": "Användarvallista: Saknas",
+    
+    // Aria Labels
+    "OpenUserSettingsPanelAriaLabel": "Öppna användarinställningspanelen",
+    "ManageLinksAriaLabel": "Hantera personliga länkar och välj organisationslänkar",
+    
+    // Dynamic Messages
+    "ImportedLinksSuccess": "Framgångsrikt importerade {0} länkar till SharePoint-listan!",
+    "ImportedLinksFailure": "{0} länkar kunde inte importeras. Kontrollera konsolen för detaljer.",
+    "CategoryCreatedSuccess": "Kategorin \"{0}\" skapades framgångsrikt!",
+    "CategoryCreationFailure": "Kunde inte skapa kategori: {0}"
   };
 });

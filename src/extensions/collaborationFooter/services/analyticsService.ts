@@ -2,39 +2,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { Log } from '@microsoft/sp-core-library';
 
-class AnalyticsMemoryManager {
-  private static instance: AnalyticsMemoryManager;
-  private cacheMap = new WeakMap();
-  private readonly MAX_CACHE_SIZE = 1000;
-  private cacheEntries = 0;
 
-  static getInstance(): AnalyticsMemoryManager {
-    if (!AnalyticsMemoryManager.instance) {
-      AnalyticsMemoryManager.instance = new AnalyticsMemoryManager();
-    }
-    return AnalyticsMemoryManager.instance;
-  }
-
-  getCachedData<T>(key: object, factory: () => T): T {
-    if (this.cacheMap.has(key)) {
-      return this.cacheMap.get(key);
-    }
-    
-    if (this.cacheEntries >= this.MAX_CACHE_SIZE) {
-      this.clearCache();
-    }
-    
-    const data = factory();
-    this.cacheMap.set(key, data);
-    this.cacheEntries++;
-    return data;
-  }
-
-  clearCache(): void {
-    this.cacheMap = new WeakMap();
-    this.cacheEntries = 0;
-  }
-}
 
 const LOG_SOURCE: string = 'AnalyticsService';
 
@@ -123,10 +91,6 @@ export class AnalyticsService {
 
       await this.storeClickEvent(clickEvent);
 
-      await this.updateLinkUsageStats(clickEvent);
-
-      await this.updateUserStats(clickEvent);
-
       Log.info(LOG_SOURCE, `Tracked click: ${clickEvent.linkName} by ${clickEvent.userDisplayName}`);
 
     } catch (error) {
@@ -195,23 +159,19 @@ export class AnalyticsService {
   public static async getAllLinkStats(): Promise<ILinkUsageStats[]> {
     try {
       const clickEvents = await this.getClickEvents();
-      const memoryManager = AnalyticsMemoryManager.getInstance();
+      // Directly calculate stats without ineffective caching
+      const linkStatsMap = new Map<string, ILinkUsageStats>();
+      const linkClicksMap = new Map<string, ILinkClickEvent[]>();
       
-      return memoryManager.getCachedData(clickEvents, () => {
-        const linkStatsMap = new Map<string, ILinkUsageStats>();
-
-        const linkClicksMap = new Map<string, ILinkClickEvent[]>();
-        
-        
-        for (let i = 0; i < clickEvents.length; i++) {
-          const event = clickEvents[i];
-          let clicks = linkClicksMap.get(event.linkId);
-          if (!clicks) {
-            clicks = [];
-            linkClicksMap.set(event.linkId, clicks);
-          }
-          clicks.push(event);
+      for (let i = 0; i < clickEvents.length; i++) {
+        const event = clickEvents[i];
+        let clicks = linkClicksMap.get(event.linkId);
+        if (!clicks) {
+          clicks = [];
+          linkClicksMap.set(event.linkId, clicks);
         }
+        clicks.push(event);
+      }
 
       linkClicksMap.forEach((clicks, linkId) => {
         const firstEvent = clicks[0];
@@ -265,9 +225,8 @@ export class AnalyticsService {
         });
       });
 
-        return Array.from(linkStatsMap.values())
-          .sort((a, b) => b.popularityScore - a.popularityScore);
-      });
+      return Array.from(linkStatsMap.values())
+        .sort((a, b) => b.popularityScore - a.popularityScore);
 
     } catch (error) {
       Log.error(LOG_SOURCE, error as Error);
@@ -432,11 +391,6 @@ export class AnalyticsService {
     }
   }
 
-  private static async updateLinkUsageStats(event: ILinkClickEvent): Promise<void> {
-  }
-
-  private static async updateUserStats(event: ILinkClickEvent): Promise<void> {
-  }
 
   private static generateSessionId(): string {
     return `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -478,6 +432,20 @@ export class AnalyticsService {
       dailyClickTrend: [],
       categoryDistribution: []
     };
+  }
+
+  public static async getRecentUserLinks(userId: string, limit: number): Promise<ILinkClickEvent[]> {
+    try {
+      const clickEvents = await this.getClickEvents();
+      // Filter by user and sort descending by timestamp
+      return clickEvents
+        .filter(e => e.userId === userId)
+        .sort((a, b) => new Date(b.clickTimestamp).getTime() - new Date(a.clickTimestamp).getTime())
+        .slice(0, limit);
+    } catch (error) {
+      Log.error(LOG_SOURCE, error as Error);
+      return [];
+    }
   }
 
   private static escapeCSVValue(value: string): string {

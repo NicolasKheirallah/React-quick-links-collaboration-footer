@@ -166,6 +166,42 @@ define([], function() {
     "CategoryAlreadyExists": "Kategorien eksisterer allerede",
     "LinkAlreadyExists": "Lenken eksisterer allerede",
     "FieldTooLong": "Feltet er for langt",
-    "FieldTooShort": "Feltet er for kort"
+    "FieldTooShort": "Feltet er for kort",
+    
+    // New Form Strings
+    "None": "(Ingen)",
+    "Reset": "Tilbakestill",
+    "NewCategoryName": "Nytt kategorinavn",
+    "SubCategoryLabel": "Underkategori (Valgfritt)",
+    "SubCategoryPlaceholder": "Velg underkategori...",
+    "NewSubCategoryName": "Nytt underkategorinavn",
+    "CategoryLabel": "Kategori",
+    
+    // New Admin Strings
+    "GlobalLinksListTitleLabel": "Global Lenkeliste Tittel",
+    "GlobalLinksListTitleDesc": "Navn på SharePoint-listen for globale lenker",
+    "OneDriveUserStorageTitle": "OneDrive Brukerlagring",
+    "EnableUserSelectionStorageLabel": "Aktiver Brukervalg-lagring",
+    "StoreInOneDrive": "Lagre i OneDrive",
+    "UseSharePointLists": "Bruk SharePoint-lister",
+    "UserSelectionStorageDesc": "Når aktivert, lagres brukerens lenkevalg og innstillinger som JSON-filer i deres OneDrive for synkronisering mellom enheter.",
+    "SharePointListsManagement": "SharePoint-listestyring",
+    "GlobalLinksListReady": "Global Lenkeliste Klar",
+    "UserSelectionsListReady": "Brukervalgsliste Klar",
+    "LastChecked": "Sist kontrollert:",
+    "GlobalLinksListFound": "Global Lenkeliste: Funnet",
+    "GlobalLinksListMissing": "Global Lenkeliste: Mangler",
+    "UserSelectionsListFound": "Brukervalgsliste: Funnet",
+    "UserSelectionsListMissing": "Brukervalgsliste: Mangler",
+    
+    // Aria Labels
+    "OpenUserSettingsPanelAriaLabel": "Åpne brukerinnstillinger-panelet",
+    "ManageLinksAriaLabel": "Behandle personlige lenker og velge organisasjonslenker",
+    
+    // Dynamic Messages
+    "ImportedLinksSuccess": "{0} lenker ble importert til SharePoint-listen!",
+    "ImportedLinksFailure": "{0} lenker kunne ikke importeres. Sjekk konsollen for detaljer.",
+    "CategoryCreatedSuccess": "Kategorien \"{0}\" ble opprettet!",
+    "CategoryCreationFailure": "Kunne ikke opprette kategori: {0}"
   };
 });

@@ -243,6 +243,42 @@ define([], function() {
     "ShowBadgesDescription": "Status-Badges auf Links anzeigen",
     "ClickBehaviorDescription": "Wie Links beim Klicken geöffnet werden",
     "MaxVisibleItemsDescription": "Maximale Anzahl anzuzeigender Elemente",
-    "SortOrderDescription": "Wie Links organisiert und sortiert werden"
+    "SortOrderDescription": "Wie Links organisiert und sortiert werden",
+    
+    // New Form Strings
+    "None": "(Keine)",
+    "Reset": "Zurücksetzen",
+    "NewCategoryName": "Neuer Kategoriename",
+    "SubCategoryLabel": "Unterkategorie (Optional)",
+    "SubCategoryPlaceholder": "Unterkategorie auswählen...",
+    "NewSubCategoryName": "Neuer Unterkategoriename",
+    "CategoryLabel": "Kategorie",
+    
+    // New Admin Strings
+    "GlobalLinksListTitleLabel": "Titel der globalen Links-Liste",
+    "GlobalLinksListTitleDesc": "Name der SharePoint-Liste für globale Links",
+    "OneDriveUserStorageTitle": "OneDrive Benutzerspeicher",
+    "EnableUserSelectionStorageLabel": "Benutzerwahl-Speicherung aktivieren",
+    "StoreInOneDrive": "In OneDrive speichern",
+    "UseSharePointLists": "SharePoint-Listen verwenden",
+    "UserSelectionStorageDesc": "Wenn aktiviert, werden Benutzerlinkauswahlen und Einstellungen als JSON-Dateien in OneDrive für geräteübergreifende Synchronisation gespeichert.",
+    "SharePointListsManagement": "SharePoint-Listen-Verwaltung",
+    "GlobalLinksListReady": "Globale Links-Liste bereit",
+    "UserSelectionsListReady": "Benutzerwahl-Liste bereit",
+    "LastChecked": "Zuletzt geprüft:",
+    "GlobalLinksListFound": "Globale Links-Liste: Gefunden",
+    "GlobalLinksListMissing": "Globale Links-Liste: Fehlt",
+    "UserSelectionsListFound": "Benutzerwahl-Liste: Gefunden",
+    "UserSelectionsListMissing": "Benutzerwahl-Liste: Fehlt",
+    
+    // Aria Labels
+    "OpenUserSettingsPanelAriaLabel": "Benutzereinstellungen-Panel öffnen",
+    "ManageLinksAriaLabel": "Persönliche Links verwalten und Organisationslinks auswählen",
+    
+    // Dynamic Messages
+    "ImportedLinksSuccess": "{0} Links erfolgreich in SharePoint-Liste importiert!",
+    "ImportedLinksFailure": "{0} Links konnten nicht importiert werden. Bitte überprüfen Sie die Konsole für Details.",
+    "CategoryCreatedSuccess": "Kategorie \"{0}\" erfolgreich erstellt!",
+    "CategoryCreationFailure": "Kategorie konnte nicht erstellt werden: {0}"
   };
 });

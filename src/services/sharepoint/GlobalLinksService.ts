@@ -9,6 +9,7 @@ import '@pnp/sp/site-users/web';
 import { IFooterService } from '../ServiceFactory';
 import { IPersonalLink, IGlobalLink, IUserLinkSelection, ISharedLink } from '../types/FooterTypes';
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
+import { SharePointLists, GlobalLinksFields, UserSelectionFields } from './SharePointConstants';
 
 const LOG_SOURCE: string = 'GlobalLinksService';
 
@@ -19,9 +20,8 @@ const LOG_SOURCE: string = 'GlobalLinksService';
 export class GlobalLinksService implements IFooterService {
   private sp: ReturnType<typeof spfi>;
   private homeSiteSp: ReturnType<typeof spfi>;
-  private globalLinksListTitle: string = 'Global Footer Links';
-  private userSelectionsListTitle: string = 'User Link Selections';
   private homeSiteUrl: string;
+
   constructor(context: BaseComponentContext, homeSiteUrl?: string) {
     this.sp = spfi().using(SPFx(context));
     
@@ -76,7 +76,10 @@ export class GlobalLinksService implements IFooterService {
         iconName: link.iconName,
         iconUrl: link.iconUrl,
         order: link.order,
-        isActive: link.isActive
+        isActive: link.isActive,
+        category: link.category,
+        isMandatory: link.isMandatory,
+        targetAudience: link.targetAudience
       }));
 
       return sharedLinks;
@@ -111,11 +114,11 @@ export class GlobalLinksService implements IFooterService {
       // Check if list exists on home site - DO NOT create automatically
       let listExists = false;
       try {
-        await this.homeSiteSp.web.lists.getByTitle(this.globalLinksListTitle)();
+        await this.homeSiteSp.web.lists.getByTitle(SharePointLists.GlobalLinks)();
         listExists = true;
-        Log.info(LOG_SOURCE, `Global links list '${this.globalLinksListTitle}' found on home site: ${this.homeSiteUrl}`);
+        Log.info(LOG_SOURCE, `Global links list '${SharePointLists.GlobalLinks}' found on home site: ${this.homeSiteUrl}`);
       } catch (listError) {
-        Log.info(LOG_SOURCE, `Global links list '${this.globalLinksListTitle}' not found on home site - will return empty array`);
+        Log.info(LOG_SOURCE, `Global links list '${SharePointLists.GlobalLinks}' not found on home site - will return empty array`);
         listExists = false;
       }
 
@@ -124,7 +127,7 @@ export class GlobalLinksService implements IFooterService {
         return [];
       }
 
-      const list = this.homeSiteSp.web.lists.getByTitle(this.globalLinksListTitle);
+      const list = this.homeSiteSp.web.lists.getByTitle(SharePointLists.GlobalLinks);
       let items: any[] = [];
       
       try {
@@ -135,12 +138,28 @@ export class GlobalLinksService implements IFooterService {
         
         // If basic query works, try full query with correct internal field names
         if (items.length >= 0) {
+          const selectFields = [
+            GlobalLinksFields.Id,
+            GlobalLinksFields.Title,
+            GlobalLinksFields.Url,
+            GlobalLinksFields.Description,
+            GlobalLinksFields.IconName,
+            GlobalLinksFields.IconUrl,
+            GlobalLinksFields.SortOrder,
+            GlobalLinksFields.Category,
+            GlobalLinksFields.IsMandatory,
+            GlobalLinksFields.IsActive,
+            GlobalLinksFields.TargetAudience,
+            GlobalLinksFields.ValidFrom,
+            GlobalLinksFields.ValidTo
+          ];
+
           items = await list.items
-            .select('Id', 'Title', 'Footer_x0020_URL', 'Description', 'Icon_x0020_Name', 'Icon_x0020_URL', 'Sort_x0020_Order', 'Category', 'Is_x0020_Mandatory', 'Is_x0020_Active', 'Target_x0020_Audience', 'Valid_x0020_From', 'Valid_x0020_To')
-            .filter('(Is_x0020_Active eq 1) or (Is_x0020_Active eq null)')
-            .orderBy('Is_x0020_Mandatory', false)
-            .orderBy('Sort_x0020_Order', true)
-            .orderBy('Title', true)();
+            .select(...selectFields)
+            .filter(`(${GlobalLinksFields.IsActive} eq 1) or (${GlobalLinksFields.IsActive} eq null)`)
+            .orderBy(GlobalLinksFields.IsMandatory, false)
+            .orderBy(GlobalLinksFields.SortOrder, true)
+            .orderBy(GlobalLinksFields.Title, true)();
         }
       } catch (queryError) {
         Log.warn(LOG_SOURCE, `Query failed: ${(queryError as Error).message}, returning empty array`);
@@ -148,19 +167,19 @@ export class GlobalLinksService implements IFooterService {
       }
 
       const globalLinks: IGlobalLink[] = items.map(item => ({
-        id: item.Id,
-        title: item.Title || '',
-        url: item.Footer_x0020_URL?.Url || item.Footer_x0020_URL || '',
-        description: item.Description || '',
-        iconName: item.Icon_x0020_Name || 'Link',
-        iconUrl: item.Icon_x0020_URL?.Url || item.Icon_x0020_URL || undefined,
-        order: item.Sort_x0020_Order || 0,
-        category: item.Category || 'General',
-        isMandatory: item.Is_x0020_Mandatory === true,
-        isActive: item.Is_x0020_Active !== false,
-        targetAudience: item.Target_x0020_Audience ? item.Target_x0020_Audience.split(';') : [],
-        validFrom: item.Valid_x0020_From,
-        validTo: item.Valid_x0020_To
+        id: item[GlobalLinksFields.Id],
+        title: item[GlobalLinksFields.Title] || '',
+        url: item[GlobalLinksFields.Url]?.Url || item[GlobalLinksFields.Url] || '',
+        description: item[GlobalLinksFields.Description] || '',
+        iconName: item[GlobalLinksFields.IconName] || 'Link',
+        iconUrl: item[GlobalLinksFields.IconUrl]?.Url || item[GlobalLinksFields.IconUrl] || undefined,
+        order: item[GlobalLinksFields.SortOrder] || 0,
+        category: item[GlobalLinksFields.Category] || 'General',
+        isMandatory: item[GlobalLinksFields.IsMandatory] === true,
+        isActive: item[GlobalLinksFields.IsActive] !== false,
+        targetAudience: item[GlobalLinksFields.TargetAudience] ? item[GlobalLinksFields.TargetAudience].split(';') : [],
+        validFrom: item[GlobalLinksFields.ValidFrom],
+        validTo: item[GlobalLinksFields.ValidTo]
       }));
 
       Log.info(LOG_SOURCE, `Successfully retrieved ${globalLinks.length} global links`);
@@ -179,11 +198,11 @@ export class GlobalLinksService implements IFooterService {
       // Check if list exists - DO NOT create automatically  
       let listExists = false;
       try {
-        await this.sp.web.lists.getByTitle(this.userSelectionsListTitle)();
+        await this.sp.web.lists.getByTitle(SharePointLists.UserSelections)();
         listExists = true;
-        Log.info(LOG_SOURCE, `User selections list '${this.userSelectionsListTitle}' found`);
+        Log.info(LOG_SOURCE, `User selections list '${SharePointLists.UserSelections}' found`);
       } catch (listError) {
-        Log.info(LOG_SOURCE, `User selections list '${this.userSelectionsListTitle}' not found - will return empty array`);
+        Log.info(LOG_SOURCE, `User selections list '${SharePointLists.UserSelections}' not found - will return empty array`);
         listExists = false;
       }
 
@@ -192,24 +211,32 @@ export class GlobalLinksService implements IFooterService {
         return [];
       }
 
-      const list = this.sp.web.lists.getByTitle(this.userSelectionsListTitle);
+      const list = this.sp.web.lists.getByTitle(SharePointLists.UserSelections);
       let items: any[] = [];
       
       try {
+        const selectFields = [
+          UserSelectionFields.Id,
+          UserSelectionFields.UserId,
+          UserSelectionFields.GlobalLinkId,
+          UserSelectionFields.IsSelected,
+          UserSelectionFields.DateSelected
+        ];
+
         items = await list.items
-          .select('Id', 'User_x0020_Id', 'Global_x0020_Link_x0020_Id', 'Is_x0020_Selected', 'Date_x0020_Selected')
-          .filter(`User_x0020_Id eq ${userId}`)();
+          .select(...selectFields)
+          .filter(`${UserSelectionFields.UserId} eq ${userId}`)();
       } catch (queryError) {
         Log.warn(LOG_SOURCE, `User selections query failed: ${(queryError as Error).message}, returning empty array`);
         return [];
       }
 
       const selections: IUserLinkSelection[] = items.map(item => ({
-        id: item.Id,
-        userId: item.User_x0020_Id?.toString() || '',
-        globalLinkId: item.Global_x0020_Link_x0020_Id,
-        isSelected: item.Is_x0020_Selected === true,
-        dateSelected: item.Date_x0020_Selected
+        id: item[UserSelectionFields.Id],
+        userId: item[UserSelectionFields.UserId]?.toString() || '',
+        globalLinkId: item[UserSelectionFields.GlobalLinkId],
+        isSelected: item[UserSelectionFields.IsSelected] === true,
+        dateSelected: item[UserSelectionFields.DateSelected]
       }));
 
       Log.info(LOG_SOURCE, `Retrieved ${selections.length} link selections for user ${userId}`);
@@ -227,7 +254,7 @@ export class GlobalLinksService implements IFooterService {
     try {
       Log.info(LOG_SOURCE, `Saving link selections for user ${userId}: ${selectedLinkIds.length} links selected`);
       
-      const list = this.sp.web.lists.getByTitle(this.userSelectionsListTitle);
+      const list = this.sp.web.lists.getByTitle(SharePointLists.UserSelections);
       
       // Get all global links to know which are optional
       const globalLinks = await this.getAllGlobalLinks();
@@ -246,17 +273,17 @@ export class GlobalLinksService implements IFooterService {
           // Update existing selection
           if (existingSelection.isSelected !== isSelected) {
             await list.items.getById(existingSelection.id!).update({
-              Is_x0020_Selected: isSelected,
-              Date_x0020_Selected: new Date().toISOString()
+              [UserSelectionFields.IsSelected]: isSelected,
+              [UserSelectionFields.DateSelected]: new Date().toISOString()
             });
           }
         } else {
           // Create new selection record
           await list.items.add({
-            User_x0020_Id: userId,
-            Global_x0020_Link_x0020_Id: link.id,
-            Is_x0020_Selected: isSelected,
-            Date_x0020_Selected: new Date().toISOString()
+            [UserSelectionFields.UserId]: userId,
+            [UserSelectionFields.GlobalLinkId]: link.id,
+            [UserSelectionFields.IsSelected]: isSelected,
+            [UserSelectionFields.DateSelected]: new Date().toISOString()
           });
         }
       }
@@ -313,14 +340,14 @@ export class GlobalLinksService implements IFooterService {
       const web = this.sp.web;
       
       try {
-        await web.lists.getByTitle(this.globalLinksListTitle)();
-        Log.info(LOG_SOURCE, `Global links list '${this.globalLinksListTitle}' already exists`);
+        await web.lists.getByTitle(SharePointLists.GlobalLinks)();
+        Log.info(LOG_SOURCE, `Global links list '${SharePointLists.GlobalLinks}' already exists`);
         return;
       } catch {
         // List doesn't exist, create it
       }
 
-      Log.info(LOG_SOURCE, `Creating global links list: ${this.globalLinksListTitle}`);
+      Log.info(LOG_SOURCE, `Creating global links list: ${SharePointLists.GlobalLinks}`);
       
       // Check if user has permissions to create lists
       try {
@@ -331,25 +358,22 @@ export class GlobalLinksService implements IFooterService {
         throw new Error('Insufficient permissions to access SharePoint');
       }
       
-      await web.lists.add(this.globalLinksListTitle, 'Global footer links with mandatory/optional flags', 100, false);
-      const list = this.sp.web.lists.getByTitle(this.globalLinksListTitle);
+      await web.lists.add(SharePointLists.GlobalLinks, 'Global footer links with mandatory/optional flags', 100, false);
+      const list = this.sp.web.lists.getByTitle(SharePointLists.GlobalLinks);
 
-      // Add custom fields with display names - SharePoint will create internal names
-      await list.fields.addUrl('Footer URL', { Title: 'Footer URL' });
-      await list.fields.addMultilineText('Description', { Title: 'Description' });
-      await list.fields.addText('Icon Name', { Title: 'Icon Name' });
-      await list.fields.addNumber('Sort Order', { Title: 'Sort Order' });
-      await list.fields.addText('Category', { Title: 'Category' });
-      await list.fields.addBoolean('Is Mandatory', { Title: 'Is Mandatory' });
-      await list.fields.addBoolean('Is Active', { Title: 'Is Active' });
-      await list.fields.addMultilineText('Target Audience', { Title: 'Target Audience' });
-      await list.fields.addDateTime('Valid From', { Title: 'Valid From' });
-      await list.fields.addDateTime('Valid To', { Title: 'Valid To' });
+      // Add custom fields
+      await list.fields.addUrl(GlobalLinksFields.Url, { Title: 'Footer URL' });
+      await list.fields.addMultilineText(GlobalLinksFields.Description, { Title: 'Description' });
+      await list.fields.addText(GlobalLinksFields.IconName, { Title: 'Icon Name' });
+      await list.fields.addNumber(GlobalLinksFields.SortOrder, { Title: 'Sort Order' });
+      await list.fields.addText(GlobalLinksFields.Category, { Title: 'Category' });
+      await list.fields.addBoolean(GlobalLinksFields.IsMandatory, { Title: 'Is Mandatory' });
+      await list.fields.addBoolean(GlobalLinksFields.IsActive, { Title: 'Is Active' });
+      await list.fields.addMultilineText(GlobalLinksFields.TargetAudience, { Title: 'Target Audience' });
+      await list.fields.addDateTime(GlobalLinksFields.ValidFrom, { Title: 'Valid From' });
+      await list.fields.addDateTime(GlobalLinksFields.ValidTo, { Title: 'Valid To' });
 
-      // Note: All fields are automatically available in SharePoint list views
-      // Users can manually add fields to views as needed via SharePoint UI
-
-      Log.info(LOG_SOURCE, `Successfully created global links list with all fields in default view: ${this.globalLinksListTitle}`);
+      Log.info(LOG_SOURCE, `Successfully created global links list with all fields in default view: ${SharePointLists.GlobalLinks}`);
     } catch (error) {
       Log.error(LOG_SOURCE, error as Error);
     }
@@ -377,25 +401,25 @@ export class GlobalLinksService implements IFooterService {
       const web = this.sp.web;
       
       try {
-        await web.lists.getByTitle(this.userSelectionsListTitle)();
-        Log.info(LOG_SOURCE, `User selections list '${this.userSelectionsListTitle}' already exists`);
+        await web.lists.getByTitle(SharePointLists.UserSelections)();
+        Log.info(LOG_SOURCE, `User selections list '${SharePointLists.UserSelections}' already exists`);
         return;
       } catch {
         // List doesn't exist, create it
       }
 
-      Log.info(LOG_SOURCE, `Creating user selections list: ${this.userSelectionsListTitle}`);
+      Log.info(LOG_SOURCE, `Creating user selections list: ${SharePointLists.UserSelections}`);
       
-      await web.lists.add(this.userSelectionsListTitle, 'User selections for global footer links', 100, false);
-      const list = this.sp.web.lists.getByTitle(this.userSelectionsListTitle);
+      await web.lists.add(SharePointLists.UserSelections, 'User selections for global footer links', 100, false);
+      const list = this.sp.web.lists.getByTitle(SharePointLists.UserSelections);
 
-      // Add custom fields with display names - SharePoint will create internal names
-      await list.fields.addNumber('User Id', { Title: 'User Id' });
-      await list.fields.addNumber('Global Link Id', { Title: 'Global Link Id' });
-      await list.fields.addBoolean('Is Selected', { Title: 'Is Selected' });
-      await list.fields.addDateTime('Date Selected', { Title: 'Date Selected' });
+      // Add custom fields
+      await list.fields.addNumber(UserSelectionFields.UserId, { Title: 'User Id' });
+      await list.fields.addNumber(UserSelectionFields.GlobalLinkId, { Title: 'Global Link Id' });
+      await list.fields.addBoolean(UserSelectionFields.IsSelected, { Title: 'Is Selected' });
+      await list.fields.addDateTime(UserSelectionFields.DateSelected, { Title: 'Date Selected' });
 
-      Log.info(LOG_SOURCE, `Successfully created user selections list: ${this.userSelectionsListTitle}`);
+      Log.info(LOG_SOURCE, `Successfully created user selections list: ${SharePointLists.UserSelections}`);
     } catch (error) {
       Log.error(LOG_SOURCE, error as Error);
     }
@@ -408,28 +432,28 @@ export class GlobalLinksService implements IFooterService {
     try {
       Log.info(LOG_SOURCE, `Adding new global link to home site: ${link.title}`);
       
-      const list = this.homeSiteSp.web.lists.getByTitle(this.globalLinksListTitle);
+      const list = this.homeSiteSp.web.lists.getByTitle(SharePointLists.GlobalLinks);
       
       const itemData: any = {
-        Title: link.title,
-        Footer_x0020_URL: {
+        [GlobalLinksFields.Title]: link.title,
+        [GlobalLinksFields.Url]: {
           Url: link.url,
           Description: link.title || link.description || ''
         },
-        Description: link.description || '',
-        Icon_x0020_Name: link.iconName || 'Link',
-        Sort_x0020_Order: link.order || 0,
-        Category: link.category || 'General',
-        Is_x0020_Mandatory: link.isMandatory || false,
-        Is_x0020_Active: link.isActive !== false,
-        Target_x0020_Audience: link.targetAudience ? link.targetAudience.join(';') : '',
-        Valid_x0020_From: link.validFrom,
-        Valid_x0020_To: link.validTo
+        [GlobalLinksFields.Description]: link.description || '',
+        [GlobalLinksFields.IconName]: link.iconName || 'Link',
+        [GlobalLinksFields.SortOrder]: link.order || 0,
+        [GlobalLinksFields.Category]: link.category || 'General',
+        [GlobalLinksFields.IsMandatory]: link.isMandatory || false,
+        [GlobalLinksFields.IsActive]: link.isActive !== false,
+        [GlobalLinksFields.TargetAudience]: link.targetAudience ? link.targetAudience.join(';') : '',
+        [GlobalLinksFields.ValidFrom]: link.validFrom,
+        [GlobalLinksFields.ValidTo]: link.validTo
       };
 
       // Add Icon URL if provided
       if (link.iconUrl) {
-        itemData.Icon_x0020_URL = {
+        itemData[GlobalLinksFields.IconUrl] = {
           Url: link.iconUrl,
           Description: `Icon for ${link.title}`
         };
@@ -452,31 +476,31 @@ export class GlobalLinksService implements IFooterService {
     try {
       Log.info(LOG_SOURCE, `Updating global link with ID ${linkId}: ${link.title}`);
       
-      const list = this.homeSiteSp.web.lists.getByTitle(this.globalLinksListTitle);
+      const list = this.homeSiteSp.web.lists.getByTitle(SharePointLists.GlobalLinks);
       
       const itemData: any = {};
 
       // Only update provided fields
-      if (link.title !== undefined) itemData.Title = link.title;
+      if (link.title !== undefined) itemData[GlobalLinksFields.Title] = link.title;
       if (link.url !== undefined) {
-        itemData.Footer_x0020_URL = {
+        itemData[GlobalLinksFields.Url] = {
           Url: link.url,
           Description: link.title || link.description || ''
         };
       }
-      if (link.description !== undefined) itemData.Description = link.description;
-      if (link.iconName !== undefined) itemData.Icon_x0020_Name = link.iconName;
-      if (link.order !== undefined) itemData.Sort_x0020_Order = link.order;
-      if (link.category !== undefined) itemData.Category = link.category;
-      if (link.isMandatory !== undefined) itemData.Is_x0020_Mandatory = link.isMandatory;
-      if (link.isActive !== undefined) itemData.Is_x0020_Active = link.isActive;
-      if (link.targetAudience !== undefined) itemData.Target_x0020_Audience = link.targetAudience.join(';');
-      if (link.validFrom !== undefined) itemData.Valid_x0020_From = link.validFrom;
-      if (link.validTo !== undefined) itemData.Valid_x0020_To = link.validTo;
+      if (link.description !== undefined) itemData[GlobalLinksFields.Description] = link.description;
+      if (link.iconName !== undefined) itemData[GlobalLinksFields.IconName] = link.iconName;
+      if (link.order !== undefined) itemData[GlobalLinksFields.SortOrder] = link.order;
+      if (link.category !== undefined) itemData[GlobalLinksFields.Category] = link.category;
+      if (link.isMandatory !== undefined) itemData[GlobalLinksFields.IsMandatory] = link.isMandatory;
+      if (link.isActive !== undefined) itemData[GlobalLinksFields.IsActive] = link.isActive;
+      if (link.targetAudience !== undefined) itemData[GlobalLinksFields.TargetAudience] = link.targetAudience.join(';');
+      if (link.validFrom !== undefined) itemData[GlobalLinksFields.ValidFrom] = link.validFrom;
+      if (link.validTo !== undefined) itemData[GlobalLinksFields.ValidTo] = link.validTo;
 
       // Add Icon URL if provided
       if (link.iconUrl !== undefined) {
-        itemData.Icon_x0020_URL = link.iconUrl ? {
+        itemData[GlobalLinksFields.IconUrl] = link.iconUrl ? {
           Url: link.iconUrl,
           Description: `Icon for ${link.title || 'link'}`
         } : null;
@@ -499,7 +523,7 @@ export class GlobalLinksService implements IFooterService {
     try {
       Log.info(LOG_SOURCE, `Deleting global link with ID: ${linkId}`);
       
-      const list = this.homeSiteSp.web.lists.getByTitle(this.globalLinksListTitle);
+      const list = this.homeSiteSp.web.lists.getByTitle(SharePointLists.GlobalLinks);
       await list.items.getById(linkId).delete();
       
       // Also clean up any user selections for this link
@@ -520,7 +544,7 @@ export class GlobalLinksService implements IFooterService {
     try {
       Log.info(LOG_SOURCE, `Bulk deleting ${linkIds.length} global links`);
       
-      const list = this.homeSiteSp.web.lists.getByTitle(this.globalLinksListTitle);
+      const list = this.homeSiteSp.web.lists.getByTitle(SharePointLists.GlobalLinks);
       
       // Delete each link individually to ensure proper cleanup
       const deletePromises = linkIds.map(async (linkId) => {
@@ -557,20 +581,20 @@ export class GlobalLinksService implements IFooterService {
       Log.info(LOG_SOURCE, `Checking for user selections to clean up for deleted link ${linkId}`);
       
       // Check if user selections list exists using web.lists.filter to avoid 404
-      const lists = await this.sp.web.lists.filter(`Title eq '${this.userSelectionsListTitle}'`)();
+      const lists = await this.sp.web.lists.filter(`Title eq '${SharePointLists.UserSelections}'`)();
       
       if (!lists || lists.length === 0) {
-        Log.info(LOG_SOURCE, `User selections list '${this.userSelectionsListTitle}' does not exist - skipping cleanup`);
+        Log.info(LOG_SOURCE, `User selections list '${SharePointLists.UserSelections}' does not exist - skipping cleanup`);
         return;
       }
 
-      const list = this.sp.web.lists.getByTitle(this.userSelectionsListTitle);
+      const list = this.sp.web.lists.getByTitle(SharePointLists.UserSelections);
       
       // Get all selections for this link
       try {
         const selections = await list.items
           .select('Id')
-          .filter(`Global_x0020_Link_x0020_Id eq ${linkId}`)();
+          .filter(`${UserSelectionFields.GlobalLinkId} eq ${linkId}`)();
 
         if (selections.length === 0) {
           Log.info(LOG_SOURCE, `No user selections found for deleted link ${linkId}`);
@@ -591,7 +615,6 @@ export class GlobalLinksService implements IFooterService {
         Log.info(LOG_SOURCE, `Successfully cleaned up ${deletedCount}/${selections.length} user selections for deleted link ${linkId}`);
       } catch (error) {
         // If there's an error querying the list, it might be because the field doesn't exist
-        // This is not critical - the main link deletion succeeded
         Log.warn(LOG_SOURCE, `Could not query user selections for link ${linkId}: ${(error as Error).message}`);
       }
     } catch (error) {
@@ -658,18 +681,18 @@ export class GlobalLinksService implements IFooterService {
         }
       ];
 
-      const list = this.sp.web.lists.getByTitle(this.globalLinksListTitle);
+      const list = this.sp.web.lists.getByTitle(SharePointLists.GlobalLinks);
       
       for (const link of sampleLinks) {
         await list.items.add({
-          Title: link.title,
-          Footer_x0020_URL: link.url,
-          Description: link.description,
-          Icon_x0020_Name: link.iconName,
-          Sort_x0020_Order: link.order,
-          Category: link.category,
-          Is_x0020_Mandatory: link.isMandatory,
-          Is_x0020_Active: link.isActive
+          [GlobalLinksFields.Title]: link.title,
+          [GlobalLinksFields.Url]: link.url,
+          [GlobalLinksFields.Description]: link.description,
+          [GlobalLinksFields.IconName]: link.iconName,
+          [GlobalLinksFields.SortOrder]: link.order,
+          [GlobalLinksFields.Category]: link.category,
+          [GlobalLinksFields.IsMandatory]: link.isMandatory,
+          [GlobalLinksFields.IsActive]: link.isActive
         });
       }
 

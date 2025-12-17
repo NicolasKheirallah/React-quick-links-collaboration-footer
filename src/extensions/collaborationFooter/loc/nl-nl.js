@@ -166,6 +166,42 @@ define([], function() {
     "CategoryAlreadyExists": "Categorie bestaat al",
     "LinkAlreadyExists": "Link bestaat al",
     "FieldTooLong": "Veld is te lang",
-    "FieldTooShort": "Veld is te kort"
+    "FieldTooShort": "Veld is te kort",
+    
+    // New Form Strings
+    "None": "(Geen)",
+    "Reset": "Resetten",
+    "NewCategoryName": "Nieuwe categorienaam",
+    "SubCategoryLabel": "Subcategorie (Optioneel)",
+    "SubCategoryPlaceholder": "Selecteer subcategorie...",
+    "NewSubCategoryName": "Nieuwe subcategorienaam",
+    "CategoryLabel": "Categorie",
+    
+    // New Admin Strings
+    "GlobalLinksListTitleLabel": "Globale Linkslijst Titel",
+    "GlobalLinksListTitleDesc": "Naam van de SharePoint-lijst voor globale links",
+    "OneDriveUserStorageTitle": "OneDrive Gebruikersopslag",
+    "EnableUserSelectionStorageLabel": "Gebruikersselectie Opslag Inschakelen",
+    "StoreInOneDrive": "Opslaan in OneDrive",
+    "UseSharePointLists": "SharePoint-lijsten gebruiken",
+    "UserSelectionStorageDesc": "Indien ingeschakeld, worden gebruikersselecties en voorkeuren opgeslagen als JSON-bestanden in hun OneDrive voor synchronisatie tussen apparaten.",
+    "SharePointListsManagement": "SharePoint-lijstbeheer",
+    "GlobalLinksListReady": "Globale Linkslijst Gereed",
+    "UserSelectionsListReady": "Gebruikersselectielijst Gereed",
+    "LastChecked": "Laatst gecontroleerd:",
+    "GlobalLinksListFound": "Globale Linkslijst: Gevonden",
+    "GlobalLinksListMissing": "Globale Linkslijst: Ontbreekt",
+    "UserSelectionsListFound": "Gebruikersselectielijst: Gevonden",
+    "UserSelectionsListMissing": "Gebruikersselectielijst: Ontbreekt",
+    
+    // Aria Labels
+    "OpenUserSettingsPanelAriaLabel": "Gebruikersinstellingen paneel openen",
+    "ManageLinksAriaLabel": "Persoonlijke links beheren en organisatielinks selecteren",
+    
+    // Dynamic Messages
+    "ImportedLinksSuccess": "{0} links succesvol geïmporteerd naar SharePoint-lijst!",
+    "ImportedLinksFailure": "{0} links konden niet worden geïmporteerd. Controleer de console voor details.",
+    "CategoryCreatedSuccess": "Categorie \"{0}\" succesvol aangemaakt!",
+    "CategoryCreationFailure": "Kon categorie niet aanmaken: {0}"
   };
 });

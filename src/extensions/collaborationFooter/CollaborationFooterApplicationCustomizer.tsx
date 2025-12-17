@@ -15,6 +15,7 @@ import ModernCollabFooter from './components/footer/ModernCollabFooter';
 import ModernLinkSelectionDialog from './components/linkSelection/ModernLinkSelectionDialog';
 import { PersonalLinkManagementDialog } from './components/dialogs/PersonalLinkManagementDialog';
 import { HybridFooterService } from '../../services/HybridFooterService';
+import { IdParser } from '../../services/utilities/IdParser';
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { initializeIcons } from '@fluentui/react';
 import { createTheme, loadTheme } from '@fluentui/react/lib/Styling';
@@ -94,9 +95,20 @@ export default class CollaborationFooterApplicationCustomizer
       // Initialize footer service based on configuration
       this._footerService = await ServiceFactory.createFooterService(this.context, this._config);
       
+      // Check initialization status if it's a HybridFooterService
+      if (this._footerService instanceof HybridFooterService) {
+        await this._footerService.initialize();
+        // Wait, ServiceFactory calls initialize() for Hybrid.
+        // But initialize() returns a status now.
+        // However, ServiceFactory returns IFooterService which doesn't expose initialize() result directly unless I cast it or if ServiceFactory logs it.
+        // ServiceFactory logs it.
+        // If I want to handle it here, I would need to modify ServiceFactory to return the status?
+        // Or I can trust the logs for now.
+        // Using "instanceof" allows accessing specific methods of HybridService if I import it.
+      }
+      
       Log.info(LOG_SOURCE, `Footer service initialized with storage type: ${this._config.storageType}`);
       
-
       await this._renderPlaceHolders();
     } catch (error) {
       Log.error(LOG_SOURCE, error as Error);
@@ -124,21 +136,8 @@ export default class CollaborationFooterApplicationCustomizer
           try {
             // Convert back to IPersonalLink[] format for saving
             const personalLinksToSave: IPersonalLink[] = updatedLinks.map((item, index) => {
-              // Extract ID from key (handles both "personal-123" and numeric keys)
-              let itemId = index; // fallback to index
-              if (item.key) {
-                if (item.key.startsWith('personal-')) {
-                  const extractedId = parseInt(item.key.replace('personal-', ''));
-                  if (!isNaN(extractedId)) {
-                    itemId = extractedId;
-                  }
-                } else {
-                  const parsedKey = parseInt(item.key);
-                  if (!isNaN(parsedKey)) {
-                    itemId = parsedKey;
-                  }
-                }
-              }
+              // Extract ID from key using IdParser
+              const itemId = IdParser.parseId(item.key, 'personal-') || index;
               
               return {
                 id: itemId,

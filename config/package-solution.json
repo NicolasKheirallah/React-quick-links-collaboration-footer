@@ -3,7 +3,7 @@
   "solution": {
     "name": "Starter Kit - Collaboration Footer",
     "id": "8b5fa72c-26f0-488a-a952-6ec68c81f623",
-    "version": "8.0.0.0",
+    "version": "9.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
@@ -20,7 +20,7 @@
         "scope": "Files.ReadWrite"
       },
       {
-        "resource": "Microsoft Graph", 
+        "resource": "Microsoft Graph",
         "scope": "User.Read"
       },
       {
@@ -50,10 +50,7 @@
         "id": "d92e00dd-d103-482a-837f-d5728af1fec6",
         "version": "3.0.0.0",
         "assets": {
-          "elementManifests": [
-            "elements.xml",
-            "clientsideinstance.xml"
-          ]
+          "elementManifests": ["elements.xml", "clientsideinstance.xml"]
         }
       }
     ]

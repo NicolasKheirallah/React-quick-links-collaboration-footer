@@ -16,6 +16,8 @@ export interface ISharedLink {
   parentId?: number;
   category?: string; // Category for grouping links in pills
   isActive: boolean;
+  isMandatory?: boolean; // Added for compatibility
+  targetAudience?: string[]; // Added for compatibility
 }
 
 /**
@@ -47,6 +49,7 @@ export interface IPersonalLink {
   url: string;
   description?: string;
   iconName?: string;
+  iconUrl?: string;
   order?: number;
   isActive: boolean;
   category?: string;
@@ -74,6 +77,15 @@ export interface IOneDrivePersonalLinksData {
   selectedGlobalLinkIds?: number[]; // User's selected organization links (legacy)
   deselectedGlobalLinkIds?: number[]; // User's deselected organization links (they chose to hide)
   userSettings?: any; // User's personal settings and preferences
+}
+
+/**
+ * User settings interface
+ */
+export interface IUserSettings {
+  theme?: string;
+  displayMode?: 'compact' | 'normal' | 'spacious';
+  openLinksInNewTab?: boolean;
 }
 
 /**

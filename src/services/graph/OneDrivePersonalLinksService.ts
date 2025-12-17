@@ -87,9 +87,9 @@ export class OneDrivePersonalLinksService implements IFooterService {
    */
   private async getPersonalLinksFile(): Promise<IOneDrivePersonalLinksData | null> {
     try {
-      // Try to get the file from OneDrive root
+      // Try to get the file from OneDrive App Folder
       const fileResponse = await this.graphClient
-        .api(`/me/drive/root:/${PERSONAL_LINKS_FILE_NAME}:/content`)
+        .api(`/me/drive/special/approot:/${PERSONAL_LINKS_FILE_NAME}:/content`)
         .get();
 
       if (fileResponse) {
@@ -123,7 +123,7 @@ export class OneDrivePersonalLinksService implements IFooterService {
       let fileExists = false;
       try {
         await this.graphClient
-          .api(`/me/drive/root:/${PERSONAL_LINKS_FILE_NAME}`)
+          .api(`/me/drive/special/approot:/${PERSONAL_LINKS_FILE_NAME}`)
           .get();
         fileExists = true;
       } catch (checkError) {
@@ -134,11 +134,11 @@ export class OneDrivePersonalLinksService implements IFooterService {
       if (fileExists) {
         // Update existing file
         await this.graphClient
-          .api(`/me/drive/root:/${PERSONAL_LINKS_FILE_NAME}:/content`)
+          .api(`/me/drive/special/approot:/${PERSONAL_LINKS_FILE_NAME}:/content`)
           .put(fileContent);
       } else {
         await this.graphClient
-          .api(`/me/drive/root:/${PERSONAL_LINKS_FILE_NAME}:/content`)
+          .api(`/me/drive/special/approot:/${PERSONAL_LINKS_FILE_NAME}:/content`)
           .put(fileContent);
       }
 
@@ -176,7 +176,7 @@ export class OneDrivePersonalLinksService implements IFooterService {
   public async checkFileExists(): Promise<boolean> {
     try {
       await this.graphClient
-        .api(`/me/drive/root:/${PERSONAL_LINKS_FILE_NAME}`)
+        .api(`/me/drive/special/approot:/${PERSONAL_LINKS_FILE_NAME}`)
         .get();
       return true;
     } catch (error) {

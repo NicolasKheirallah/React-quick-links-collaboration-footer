@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { memo, useMemo } from 'react';
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
-import { IUserSettings, DisplayMode, PillStyle, PillSize, Density } from '../../types/UserSettings';
+import { IUserSettings, DisplayMode, PillStyle, PillSize, Density, SortOrder } from '../../types/UserSettings';
 import { CategoryPillDropdowns } from './CategoryPillDropdowns';
 import styles from './ModernCollabFooter.module.scss';
 
@@ -11,6 +11,7 @@ export interface IFooterContentProps {
   renderLinkBadge: (link: IContextualMenuItem) => React.ReactNode;
   isLoading: boolean;
   userSettings: IUserSettings;
+  recentLinks?: IContextualMenuItem[];
 }
 
 const FooterContentComponent: React.FC<IFooterContentProps> = ({
@@ -18,18 +19,36 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
   handleLinkClick,
   renderLinkBadge,
   isLoading,
-  userSettings
+  userSettings,
+  recentLinks = []
 }) => {
   
 
-  const visibleLinks = allLinksToDisplay;
-  const hasMoreLinks = false;
-
   const { organizationLinks, personalLinks } = useMemo(() => {
+    // 1. Sort all links first based on settings
+    const sortedLinks = [...allLinksToDisplay].sort((a, b) => {
+      // Always put Mandatory links first if configured? (Maybe later)
+      
+      switch (userSettings.sortOrder) {
+        case SortOrder.Alphabetical:
+          return (a.name || '').localeCompare(b.name || '');
+        case SortOrder.DateAdded:
+           // Assuming data.id or some timestamp exists, otherwise fallback
+           return ((b.data as any)?.id || 0) - ((a.data as any)?.id || 0); // Newer IDs first
+        case SortOrder.UsageFrequency:
+           // Mock usage frequency or use available field
+           return 0; // Not fully implemented yet
+        case SortOrder.Manual:
+          return ((a.data as any)?.sortOrder || 0) - ((b.data as any)?.sortOrder || 0);
+        default:
+          return 0;
+      }
+    });
+
     const orgLinks: typeof allLinksToDisplay = [];
     const persLinks: typeof allLinksToDisplay = [];
     
-    allLinksToDisplay.forEach(link => {
+    sortedLinks.forEach(link => {
       if (link.key?.startsWith('personal-')) {
         persLinks.push(link);
       } else {
@@ -41,7 +60,17 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
       organizationLinks: orgLinks,
       personalLinks: persLinks
     };
-  }, [allLinksToDisplay]);
+  }, [allLinksToDisplay, userSettings.sortOrder]);
+
+  const visibleLinks = useMemo(() => {
+    if (userSettings.displayMode === DisplayMode.FlatPills) {
+      return allLinksToDisplay.slice(0, userSettings.maxVisibleItems);
+    }
+    return allLinksToDisplay;
+  }, [allLinksToDisplay, userSettings.displayMode, userSettings.maxVisibleItems]);
+
+  const hasMoreLinks = userSettings.displayMode === DisplayMode.FlatPills && allLinksToDisplay.length > userSettings.maxVisibleItems;
+
 
 
   const getDensityClass = () => {
@@ -101,6 +130,8 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
             pillStyle={userSettings.pillStyle.toLowerCase() as 'rounded' | 'square' | 'minimal'}
             pillSize={getPillSizeString() as 'small' | 'medium' | 'large'}
             density={userSettings.density.toLowerCase() as 'compact' | 'normal' | 'spacious'}
+            openUpward={true}
+            iconSize={userSettings.iconSize}
           />
         </div>
       </div>
@@ -120,6 +151,8 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
             pillStyle={userSettings.pillStyle.toLowerCase() as 'rounded' | 'square' | 'minimal'}
             pillSize={getPillSizeString() as 'small' | 'medium' | 'large'}
             density={userSettings.density.toLowerCase() as 'compact' | 'normal' | 'spacious'}
+            openUpward={true}
+            iconSize={userSettings.iconSize}
           />
         </div>
       </div>
@@ -139,6 +172,8 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
             pillStyle={userSettings.pillStyle.toLowerCase() as 'rounded' | 'square' | 'minimal'}
             pillSize={getPillSizeString() as 'small' | 'medium' | 'large'}
             density={userSettings.density.toLowerCase() as 'compact' | 'normal' | 'spacious'}
+            openUpward={true}
+            iconSize={userSettings.iconSize}
           />
         </div>
       </div>
@@ -160,6 +195,7 @@ const FooterContentComponent: React.FC<IFooterContentProps> = ({
                   onClick={(e) => handleLinkClick(link, e)}
                   title={link.title || link.name}
                   disabled={!link.href}
+                  tabIndex={userSettings.enableKeyboardNavigation ? 0 : -1}
                   style={{
                     fontSize: userSettings.iconSize === 'small' ? '10px' : userSettings.iconSize === 'large' ? '14px' : '11px'
                   }}

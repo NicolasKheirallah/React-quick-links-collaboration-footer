@@ -1,5 +1,6 @@
 declare interface ICollaborationFooterApplicationCustomizerStrings {
   Title: string;
+  None: string;
   MyLinks: string;
   EditMyLinks: string;
   MyLinksSaveSuccess: string;
@@ -288,6 +289,40 @@ declare interface ICollaborationFooterApplicationCustomizerStrings {
   ClickBehaviorDescription: string;
   MaxVisibleItemsDescription: string;
   SortOrderDescription: string;
+  
+  // New Form Strings
+  NewCategoryName: string;
+  SubCategoryLabel: string;
+  SubCategoryPlaceholder: string;
+  NewSubCategoryName: string;
+  CategoryLabel: string;
+  
+  // New Admin Strings
+  GlobalLinksListTitleLabel: string;
+  GlobalLinksListTitleDesc: string;
+  OneDriveUserStorageTitle: string;
+  EnableUserSelectionStorageLabel: string;
+  StoreInOneDrive: string;
+  UseSharePointLists: string;
+  UserSelectionStorageDesc: string;
+  SharePointListsManagement: string;
+  GlobalLinksListReady: string;
+  UserSelectionsListReady: string;
+  LastChecked: string;
+  GlobalLinksListFound: string;
+  GlobalLinksListMissing: string;
+  UserSelectionsListFound: string;
+  UserSelectionsListMissing: string;
+  
+  // Aria Labels
+  OpenUserSettingsPanelAriaLabel: string;
+  ManageLinksAriaLabel: string;
+  
+  // Dynamic Messages
+  ImportedLinksSuccess: string;
+  ImportedLinksFailure: string;
+  CategoryCreatedSuccess: string;
+  CategoryCreationFailure: string;
 }
 
 declare module 'CollaborationFooterApplicationCustomizerStrings' {

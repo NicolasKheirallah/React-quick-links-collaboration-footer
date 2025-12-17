@@ -166,6 +166,42 @@ define([], function() {
     "CategoryAlreadyExists": "Kategori zaten mevcut",
     "LinkAlreadyExists": "Bağlantı zaten mevcut",
     "FieldTooLong": "Alan çok uzun",
-    "FieldTooShort": "Alan çok kısa"
+    "FieldTooShort": "Alan çok kısa",
+    
+    // New Form Strings
+    "None": "(Yok)",
+    "Reset": "Sıfırla",
+    "NewCategoryName": "Yeni kategori adı",
+    "SubCategoryLabel": "Alt Kategori (İsteğe Bağlı)",
+    "SubCategoryPlaceholder": "Alt kategori seçin...",
+    "NewSubCategoryName": "Yeni alt kategori adı",
+    "CategoryLabel": "Kategori",
+    
+    // New Admin Strings
+    "GlobalLinksListTitleLabel": "Global Bağlantı Listesi Başlığı",
+    "GlobalLinksListTitleDesc": "Global bağlantılar için SharePoint listesinin adı",
+    "OneDriveUserStorageTitle": "OneDrive Kullanıcı Depolama",
+    "EnableUserSelectionStorageLabel": "Kullanıcı Seçim Depolamasını Etkinleştir",
+    "StoreInOneDrive": "OneDrive'da Sakla",
+    "UseSharePointLists": "SharePoint Listelerini Kullan",
+    "UserSelectionStorageDesc": "Etkinleştirildiğinde, kullanıcı bağlantı seçimleri ve tercihleri cihazlar arası senkronizasyon için OneDrive'da JSON dosyaları olarak saklanır.",
+    "SharePointListsManagement": "SharePoint Liste Yönetimi",
+    "GlobalLinksListReady": "Global Bağlantı Listesi Hazır",
+    "UserSelectionsListReady": "Kullanıcı Seçim Listesi Hazır",
+    "LastChecked": "Son kontrol:",
+    "GlobalLinksListFound": "Global Bağlantı Listesi: Bulundu",
+    "GlobalLinksListMissing": "Global Bağlantı Listesi: Eksik",
+    "UserSelectionsListFound": "Kullanıcı Seçim Listesi: Bulundu",
+    "UserSelectionsListMissing": "Kullanıcı Seçim Listesi: Eksik",
+    
+    // Aria Labels
+    "OpenUserSettingsPanelAriaLabel": "Kullanıcı ayarları panelini aç",
+    "ManageLinksAriaLabel": "Kişisel bağlantıları yönet ve organizasyon bağlantılarını seç",
+    
+    // Dynamic Messages
+    "ImportedLinksSuccess": "{0} bağlantı SharePoint listesine başarıyla aktarıldı!",
+    "ImportedLinksFailure": "{0} bağlantı aktarılamadı. Ayrıntılar için konsolu kontrol edin.",
+    "CategoryCreatedSuccess": "\"{0}\" kategorisi başarıyla oluşturuldu!",
+    "CategoryCreationFailure": "Kategori oluşturulamadı: {0}"
   };
 });

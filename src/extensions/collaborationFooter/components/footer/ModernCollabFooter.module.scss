@@ -1,6 +1,8 @@
 @import '~@fluentui/react/dist/sass/References.scss';
 @import '../../styles/theme.module.scss';
 
+@import '../../styles/_mixins.scss';
+
 :root {
   // Footer specific variables that extend theme variables
   --footer-bg-primary: linear-gradient(135deg, var(--cf-color-bg-secondary) 0%, var(--cf-color-bg-tertiary) 100%);
@@ -21,6 +23,31 @@
   --border-radius: var(--cf-border-radius-l);
   --border-radius-small: var(--cf-border-radius-m);
   --transition: var(--cf-transition-normal);
+  
+  // Font Size Defaults
+  --cf-font-size-base: 11px;
+  --cf-font-size-icon: 10px;
+}
+
+// Font Size Overrides
+.fontSizeSmall {
+  --cf-font-size-base: 10px;
+  --cf-font-size-icon: 9px;
+}
+
+.fontSizeMedium {
+  --cf-font-size-base: 11px;
+  --cf-font-size-icon: 10px;
+}
+
+.fontSizeLarge {
+  --cf-font-size-base: 13px;
+  --cf-font-size-icon: 12px;
+}
+
+.fontSizeXLarge {
+  --cf-font-size-base: 15px;
+  --cf-font-size-icon: 14px;
 }
 
 // Global SearchBox border removal
@@ -29,128 +56,6 @@
   
   :global(.ms-SearchBox-field) {
     border: none !important;
-  }
-}
-
-@mixin button-base {
-  border: 1px solid var(--button-border);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 500;
-  outline: none;
-  
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--button-shadow-hover);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-  
-  &:focus {
-    border-color: var(--button-color);
-    box-shadow: 0 0 0 1px var(--button-color);
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    
-    &:hover {
-      transform: none;
-      box-shadow: none;
-    }
-  }
-}
-
-@mixin link-base {
-  background: var(--link-bg);
-  border: 1px solid var(--link-border);
-  color: var(--link-color);
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  font-weight: 500;
-  text-decoration: none;
-  outline: none;
-  
-  &:hover {
-    background: var(--link-bg-hover);
-    border-color: var(--button-color);
-    transform: translateY(-1px);
-    box-shadow: var(--link-shadow-hover);
-    color: var(--link-color-hover);
-  }
-  
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 3px rgba(0, 120, 212, 0.2);
-  }
-  
-  &:focus {
-    border-color: var(--button-color);
-    box-shadow: 0 0 0 1px var(--button-color);
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    
-    &:hover {
-      background: var(--link-bg);
-      border-color: var(--link-border);
-      transform: none;
-      box-shadow: none;
-      color: var(--link-color);
-    }
-  }
-}
-
-@mixin responsive-padding {
-  @media screen and (max-width: 1024px) {
-    padding: 3px 6px;
-  }
-  
-  @media screen and (max-width: 768px) {
-    padding: 2px 4px;
-  }
-  
-  @media screen and (max-width: 480px) {
-    padding: 2px;
-  }
-}
-
-@keyframes slideInFromBottom {
-  0% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 1px 3px rgba(216, 59, 1, 0.4), 0 0 0 0 rgba(216, 59, 1, 0.7);
-  }
-  70% {
-    box-shadow: 0 1px 3px rgba(216, 59, 1, 0.4), 0 0 0 6px rgba(216, 59, 1, 0);
-  }
-  100% {
-    box-shadow: 0 1px 3px rgba(216, 59, 1, 0.4), 0 0 0 0 rgba(216, 59, 1, 0);
   }
 }
 
@@ -166,7 +71,39 @@
   animation: slideInFromBottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   box-sizing: border-box;
   overflow-x: hidden;
+
+  &.floatingDock {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    max-width: 90vw;
+    border-radius: 20px;
+    margin-top: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    
+    .footerContainer {
+      border-radius: 20px;
+      padding: 8px 24px;
+    }
+
+    @media screen and (max-width: 768px) {
+      bottom: 16px;
+      max-width: 95vw;
+      border-radius: 16px;
+      
+      .footerContainer {
+        border-radius: 16px;
+        padding: 6px 16px;
+      }
+    }
+  }
 }
+
 
 .footerContainer {
   max-width: 1200px;
@@ -444,6 +381,15 @@
   padding: 2px 0;
   width: 100%;
   overflow: visible;
+
+  // Staggered Animation
+  @for $i from 1 through 20 {
+    > :nth-child(#{$i}) {
+      animation: slideInFromBottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+      animation-delay: #{$i * 0.03}s;
+    }
+  }
+
   
   > * {
     flex-shrink: 0;
@@ -497,14 +443,20 @@
   font-size: 10px;
 }
 
+.fontSizeMedium {
+  --cf-font-size-base: 11px;
+  --cf-font-size-icon: 10px;
+}
+
 .linkPill {
   @extend .linkItem;
+  @extend .fontSizeMedium;
   height: 20px;
   line-height: 16px;
 }
 
 .linkIcon {
-  font-size: 8px;
+  font-size: var(--cf-font-size-icon, 8px);
   color: var(--button-color);
   margin-right: 2px;
 }
@@ -1003,5 +955,27 @@
   
   :root {
     --transition: none;
+  }
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  min-height: 50px;
+}
+
+// Disable hover effects when configured
+.disableHover {
+  :global {
+    button:hover, 
+    a:hover, 
+    .ms-Button:hover {
+      transform: none !important;
+      box-shadow: none !important;
+      transition: none !important;
+    }
   }
 }

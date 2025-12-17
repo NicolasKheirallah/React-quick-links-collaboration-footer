@@ -1,0 +1,132 @@
+
+// Common Mixins and Animations
+
+@mixin button-base {
+  border: 1px solid var(--button-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  outline: none;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--button-shadow-hover);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:focus {
+    border-color: var(--button-color);
+    box-shadow: 0 0 0 1px var(--button-color);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+@mixin link-base {
+  background: var(--link-bg);
+  border: 1px solid var(--link-border);
+  color: var(--link-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: var(--cf-font-size-base, 11px);
+  font-weight: 500;
+  text-decoration: none;
+  outline: none;
+  
+  &:hover {
+    background: var(--link-bg-hover);
+    border-color: var(--button-color);
+    transform: translateY(-1px);
+    box-shadow: var(--link-shadow-hover, 0 2px 4px rgba(0, 0, 0, 0.1));
+    color: var(--link-color-hover);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 120, 212, 0.2);
+  }
+  
+  &:focus {
+    border-color: var(--button-color);
+    box-shadow: 0 0 0 1px var(--button-color);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    
+    &:hover {
+      background: var(--link-bg);
+      border-color: var(--link-border);
+      transform: none;
+      box-shadow: none;
+      color: var(--link-color);
+    }
+  }
+}
+
+@mixin responsive-padding {
+  @media screen and (max-width: 1024px) {
+    padding: 3px 6px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    padding: 2px 4px;
+  }
+  
+  @media screen and (max-width: 480px) {
+    padding: 2px;
+  }
+}
+
+// Keyframes
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 1px 3px rgba(216, 59, 1, 0.4), 0 0 0 0 rgba(216, 59, 1, 0.7);
+  }
+  70% {
+    box-shadow: 0 1px 3px rgba(216, 59, 1, 0.4), 0 0 0 6px rgba(216, 59, 1, 0);
+  }
+  100% {
+    box-shadow: 0 1px 3px rgba(216, 59, 1, 0.4), 0 0 0 0 rgba(216, 59, 1, 0);
+  }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

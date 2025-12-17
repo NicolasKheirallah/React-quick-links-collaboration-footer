@@ -15,6 +15,7 @@ export interface IPersonalLinkFormProps {
   isEditMode?: boolean;
   onCreateCategory?: (categoryName: string) => Promise<boolean>;
   onCategoriesRefresh?: () => Promise<void>;
+  enableAutoCategories?: boolean;
 }
 
 export const PersonalLinkForm: React.FC<IPersonalLinkFormProps> = ({
@@ -27,7 +28,8 @@ export const PersonalLinkForm: React.FC<IPersonalLinkFormProps> = ({
   isLoading = false,
   isEditMode = false,
   onCreateCategory,
-  onCategoriesRefresh
+  onCategoriesRefresh,
+  enableAutoCategories
 }) => {
   return (
     <BaseLinkForm<IPersonalLinkFormData>

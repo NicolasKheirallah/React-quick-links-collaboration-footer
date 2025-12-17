@@ -1,6 +1,7 @@
 define([], function() {
   return {
     "Title": "Collaboration Footer",
+    "None": "(None)",
     "MyLinks": "My Links",
     "EditMyLinks": "Edit My Links",
     "MyLinksSaveSuccess": "My Links saved successfully",
@@ -288,6 +289,42 @@ define([], function() {
     "ShowBadgesDescription": "Display status badges on links",
     "ClickBehaviorDescription": "How links open when clicked",
     "MaxVisibleItemsDescription": "Maximum number of items to display",
-    "SortOrderDescription": "How to organize and sort links"
+    "SortOrderDescription": "How to organize and sort links",
+    
+    // New Form Strings
+    "NewCategoryName": "New Category Name",
+    "SubCategoryLabel": "Sub-Category (Optional)",
+    "SubCategoryPlaceholder": "Select a sub-category...",
+    "NewSubCategoryName": "New Sub-Category Name",
+    "CategoryLabel": "Category",
+    
+    // New Admin Strings
+    "GlobalLinksListTitleLabel": "Global Links List Title",
+    "GlobalLinksListTitleDesc": "Name of the SharePoint list for global links",
+    "OneDriveUserStorageTitle": "OneDrive User Storage",
+    "EnableUserSelectionStorageLabel": "Enable User Selection Storage",
+    "StoreInOneDrive": "Store in OneDrive",
+    "UseSharePointLists": "Use SharePoint Lists",
+    "UserSelectionStorageDesc": "When enabled, user link selections and preferences are stored as JSON files in their OneDrive for cross-device sync.",
+    "SharePointListsManagement": "SharePoint Lists Management",
+    "GlobalLinksListReady": "Global Links List Ready",
+    "UserSelectionsListReady": "User Selections List Ready",
+    "GlobalLinksListFound": "Global Links List: Found",
+    "GlobalLinksListMissing": "Global Links List: Missing",
+    "LastChecked": "Last checked:",
+    "GlobalLinksListFound": "Global Links List: Found",
+    "GlobalLinksListMissing": "Global Links List: Missing",
+    "UserSelectionsListFound": "User Selections List: Found",
+    "UserSelectionsListMissing": "User Selections List: Missing",
+    
+    // Aria Labels
+    "OpenUserSettingsPanelAriaLabel": "Open user settings panel",
+    "ManageLinksAriaLabel": "Manage personal links and select organization links",
+    
+    // Dynamic Messages
+    "ImportedLinksSuccess": "Successfully imported {0} links to SharePoint list!",
+    "ImportedLinksFailure": "{0} links failed to import. Please check the console for details.",
+    "CategoryCreatedSuccess": "Category \"{0}\" created successfully!",
+    "CategoryCreationFailure": "Failed to create category: {0}"
   };
 });

@@ -16,6 +16,10 @@ export interface ICategoryPillDropdownsProps {
   pillStyle?: 'rounded' | 'square' | 'minimal';
   pillSize?: 'small' | 'medium' | 'large';
   density?: 'compact' | 'normal' | 'spacious';
+  openUpward?: boolean;
+  iconSize?: 'small' | 'medium' | 'large';
+  enableKeyboardNavigation?: boolean;
+  recentLinks?: IContextualMenuItem[];
 }
 
 type IGroupedLinks = Map<string, IContextualMenuItem[]>;
@@ -30,8 +34,13 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
   className = '',
   pillStyle = 'rounded',
   pillSize = 'medium',
-  density = 'normal'
+  density = 'normal',
+  openUpward = false,
+  iconSize = 'medium',
+  enableKeyboardNavigation = true,
+  recentLinks = []
 }) => {
+
   const groupedOrgLinks = useMemo((): IGroupedLinks => {
     const grouped = new Map<string, IContextualMenuItem[]>();
     
@@ -48,21 +57,6 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
     return grouped;
   }, [organizationLinks]);
 
-  const groupedPersonalLinks = useMemo((): IGroupedLinks => {
-    const grouped = new Map<string, IContextualMenuItem[]>();
-    
-    personalLinks.forEach(link => {
-      const category = (link.data as any)?.category || 'General';
-      const existing = grouped.get(category);
-      if (existing) {
-        existing.push(link);
-      } else {
-        grouped.set(category, [link]);
-      }
-    });
-    
-    return grouped;
-  }, [personalLinks]);
 
   const getCategoryIcon = (category: string): string => {
     const categoryLower = category.toLowerCase();
@@ -102,41 +96,101 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
   };
 
   const renderCategoryPills = () => {
-    const orgCategories = Array.from(groupedOrgLinks.keys());
-    const personalCategories = Array.from(groupedPersonalLinks.keys());
-    const allCategories = new Set([...orgCategories, ...personalCategories]);
+    // 1. Group items by Main Category -> Sub Category
+    // Structure: Map<MainCategory, { direct: links[], subs: Map<SubName, links[]> }>
+    const categoryMap = new Map<string, { direct: IContextualMenuItem[], subs: Map<string, IContextualMenuItem[]> }>();
 
+    // Helper to process links
+    const processLinks = (links: IContextualMenuItem[]) => {
+      links.forEach(link => {
+        let fullCategory = (link.data as any)?.category || 'General';
+        // Handle "Parent: Child" format
+        const parts = fullCategory.split(':').map((s: string) => s.trim());
+        const mainCat = parts[0] || 'General';
+        const subCat = parts.length > 1 ? parts[1] : null;
 
-    const categoryPills = Array.from(allCategories)
-      .sort()
-      .map(category => {
-        const orgLinksInCategory = groupedOrgLinks.get(category) || [];
-        const personalLinksInCategory = groupedPersonalLinks.get(category) || [];
-        const allLinksInCategory = [...orgLinksInCategory, ...personalLinksInCategory];
+        if (!categoryMap.has(mainCat)) {
+          categoryMap.set(mainCat, { direct: [], subs: new Map() });
+        }
         
-        if (allLinksInCategory.length === 0) return null;
+        const group = categoryMap.get(mainCat)!;
+        
+        if (subCat) {
+          if (!group.subs.has(subCat)) {
+            group.subs.set(subCat, []);
+          }
+          group.subs.get(subCat)!.push(link);
+        } else {
+          group.direct.push(link);
+        }
+      });
+    };
 
-        return (
-          <PillDropdown
-            key={`category-${category}-${allLinksInCategory.length}`}
-            title={category}
-            iconName={getCategoryIcon(category)}
-            items={allLinksInCategory}
-            variant="category"
-            onItemClick={onLinkClick}
-            badge={undefined}
-            groupByCategory={false}
-            showIcons={true}
-            isNested={false}
-            pillStyle={pillStyle}
-            pillSize={pillSize}
-            density={density}
-          />
-        );
-      })
-      .filter(Boolean);
+    processLinks(organizationLinks);
+    processLinks(personalLinks);
 
-    return categoryPills;
+    // 2. Create Pills
+    const sortedMainCategories = Array.from(categoryMap.keys()).sort();
+
+    return sortedMainCategories.map(mainCat => {
+      const group = categoryMap.get(mainCat)!;
+      const sortedSubCats = Array.from(group.subs.keys()).sort();
+      
+      const menuItems: IContextualMenuItem[] = [];
+
+      // Add Sub-Categories (Folders) first
+      sortedSubCats.forEach(subName => {
+        const subLinks = group.subs.get(subName) || [];
+        if (subLinks.length > 0) {
+          menuItems.push({
+            key: `sub-${mainCat}-${subName}`,
+            text: subName,
+            iconProps: { iconName: 'FolderHorizontal' },
+            subMenuProps: {
+              items: subLinks.sort((a, b) => (a.name || '').localeCompare(b.name || '')).map(item => ({
+                ...item,
+                onClick: (ev, i) => onLinkClick && onLinkClick(item)
+              }))
+            }
+          });
+        }
+      });
+
+      // Add Separator if we have both subs and direct links
+      if (sortedSubCats.length > 0 && group.direct.length > 0) {
+        menuItems.push({
+          key: `sep-${mainCat}`,
+          itemType: 1, // Divider
+          name: '-' 
+        });
+      }
+
+      // Add Direct Links
+      menuItems.push(...group.direct.sort((a, b) => (a.name || '').localeCompare(b.name || '')));
+
+      if (menuItems.length === 0) return null;
+
+      return (
+        <PillDropdown
+          key={`category-${mainCat}`}
+          title={mainCat}
+          iconName={getCategoryIcon(mainCat)}
+          items={menuItems}
+          variant="category"
+          onItemClick={onLinkClick}
+          badge={undefined}
+          groupByCategory={false}
+          showIcons={true}
+          isNested={false}
+          pillStyle={pillStyle}
+          pillSize={pillSize}
+          density={density}
+          openUpward={openUpward}
+          iconSize={iconSize}
+          disableSorting={true} // We did custom sorting
+        />
+      );
+    });
   };
 
   const renderTypePills = () => {
@@ -158,6 +212,7 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
           pillStyle={pillStyle}
           pillSize={pillSize}
           density={density}
+          openUpward={openUpward}
         />
       );
     }
@@ -178,6 +233,7 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
           pillStyle={pillStyle}
           pillSize={pillSize}
           density={density}
+          openUpward={openUpward}
         />
       );
     }
@@ -187,6 +243,30 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
 
   const renderMixedPills = () => {
     const pills = [];
+
+    // Add Recent Links first if available
+    if (recentLinks.length > 0) {
+      pills.push(
+        <PillDropdown
+          key="recent"
+          title="Recent"
+          iconName="History"
+          items={recentLinks}
+          variant="personal" // Use personal variant style for now
+          onItemClick={onLinkClick}
+          badge={undefined}
+          groupByCategory={false}
+          showIcons={true}
+          isNested={false}
+          pillStyle={pillStyle}
+          pillSize={pillSize}
+          density={density}
+          openUpward={openUpward}
+          iconSize={iconSize}
+          enableKeyboardNavigation={enableKeyboardNavigation}
+        />
+      );
+    }
 
     pills.push(...renderTypePills());
 
@@ -207,6 +287,7 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
           pillStyle={pillStyle}
           pillSize={pillSize}
           density={density}
+          openUpward={openUpward}
         />
       ));
 
@@ -257,37 +338,7 @@ const CategoryPillDropdownsComponent: React.FC<ICategoryPillDropdownsProps> = ({
   );
 };
 
-export const CategoryPillDropdowns = memo(CategoryPillDropdownsComponent, (prevProps, nextProps) => {
-  if (prevProps.organizationLinks.length !== nextProps.organizationLinks.length) return false;
-  if (prevProps.personalLinks.length !== nextProps.personalLinks.length) return false;
-  if (prevProps.displayMode !== nextProps.displayMode) return false;
-  if (prevProps.showBadges !== nextProps.showBadges) return false;
-  if (prevProps.pillStyle !== nextProps.pillStyle) return false;
-  if (prevProps.pillSize !== nextProps.pillSize) return false;
-  if (prevProps.density !== nextProps.density) return false;
-  if (prevProps.maxPillsPerRow !== nextProps.maxPillsPerRow) return false;
-  if (prevProps.className !== nextProps.className) return false;
-  
-  const orgLinksChanged = !prevProps.organizationLinks.every((link, index) => {
-    const nextLink = nextProps.organizationLinks[index];
-    return nextLink &&
-      link.key === nextLink.key &&
-      link.name === nextLink.name &&
-      (link.data as any)?.category === (nextLink.data as any)?.category;
-  });
-  if (orgLinksChanged) return false;
-  
-  const personalLinksChanged = !prevProps.personalLinks.every((link, index) => {
-    const nextLink = nextProps.personalLinks[index];
-    return nextLink &&
-      link.key === nextLink.key &&
-      link.name === nextLink.name &&
-      (link.data as any)?.category === (nextLink.data as any)?.category;
-  });
-  if (personalLinksChanged) return false;
-  
-  return true;
-});
+export const CategoryPillDropdowns = memo(CategoryPillDropdownsComponent);
 
 export interface IOrganizationPillProps {
   links: IContextualMenuItem[];

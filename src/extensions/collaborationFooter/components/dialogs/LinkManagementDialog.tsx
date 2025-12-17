@@ -263,6 +263,7 @@ export const LinkManagementDialog: React.FC<ILinkManagementDialogProps> = ({
                   footerService={footerService}
                   onCreateCategory={onCreateCategory}
                   onCategoriesRefresh={onCategoriesRefresh}
+                  enableAutoCategories={currentUserSettings?.enableAutoCategories}
                 />
               </PivotItem>
 

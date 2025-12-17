@@ -404,9 +404,6 @@ export class CSVService {
     alert(message);
     
     // Also log full content to console for easy copying
-    console.log(`%c📄 CSV Export Data for ${filename}:`, 'color: #0078d4; font-weight: bold; font-size: 14px;');
-    console.log(csvContent);
-    console.log('%cCopy the above CSV data and save it as a .csv file', 'color: #107c10; font-style: italic;');
   }
 
   /**

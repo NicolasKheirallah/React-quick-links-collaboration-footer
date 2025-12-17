@@ -25,8 +25,11 @@ import {
   DisplayMode, 
   PillStyle, 
   PillSize,
+  FontSize,
   Density, 
   BarSize,
+  BarLayout,
+
   SortOrder, 
   ClickBehavior,
   DEFAULT_USER_SETTINGS 
@@ -193,8 +196,13 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
   const pillStyleOptions: IDropdownOption[] = [
     { key: PillStyle.Rounded, text: settings.pillStyle === PillStyle.Rounded ? `${strings.Rounded} (${strings.Current})` : strings.Rounded },
     { key: PillStyle.Square, text: settings.pillStyle === PillStyle.Square ? `${strings.Square} (${strings.Current})` : strings.Square },
-    { key: PillStyle.Minimal, text: settings.pillStyle === PillStyle.Minimal ? `${strings.Minimal} (${strings.Current})` : strings.Minimal }
+    { key: PillStyle.Minimal, text: settings.pillStyle === PillStyle.Minimal ? `${strings.Minimal} (${strings.Current})` : strings.Minimal },
+    { key: PillStyle.Glass, text: settings.pillStyle === PillStyle.Glass ? `Glass (Premium) (${strings.Current})` : 'Glass (Premium)' },
+    { key: PillStyle.Filled, text: settings.pillStyle === PillStyle.Filled ? `Filled (Accent) (${strings.Current})` : 'Filled (Accent)' },
+    { key: PillStyle.Gradient, text: settings.pillStyle === PillStyle.Gradient ? `Gradient (Premium) (${strings.Current})` : 'Gradient (Premium)' },
+    { key: PillStyle.Neon, text: settings.pillStyle === PillStyle.Neon ? `Neon (Glow) (${strings.Current})` : 'Neon (Glow)' }
   ];
+
 
   const densityOptions: IDropdownOption[] = [
     { key: Density.Compact, text: settings.density === Density.Compact ? `${strings.Compact} (${strings.Current})` : strings.Compact },
@@ -208,6 +216,12 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
     { key: BarSize.Large, text: settings.barSize === BarSize.Large ? `${strings.Large} (${strings.Current})` : strings.Large }
   ];
 
+  const barLayoutOptions: IDropdownOption[] = [
+    { key: BarLayout.FullWidth, text: settings.barLayout === BarLayout.FullWidth ? `Full Width (${strings.Current})` : 'Full Width' },
+    { key: BarLayout.FloatingDock, text: settings.barLayout === BarLayout.FloatingDock ? `Floating Dock (${strings.Current})` : 'Floating Dock' }
+  ];
+
+
   const pillSizeOptions: IDropdownOption[] = [
     { key: PillSize.Small, text: settings.pillSize === PillSize.Small ? `${strings.Small} (${strings.Current})` : strings.Small },
     { key: PillSize.Medium, text: settings.pillSize === PillSize.Medium ? `${strings.Medium} (${strings.Current})` : strings.Medium },
@@ -219,6 +233,13 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
     { key: SortOrder.UsageFrequency, text: 'Most Used First' },
     { key: SortOrder.DateAdded, text: 'Recently Added First' },
     { key: SortOrder.Manual, text: 'Manual Order' }
+  ];
+
+  const fontSizeOptions: IDropdownOption[] = [
+    { key: FontSize.Small, text: settings.fontSize === FontSize.Small ? `${strings.Small} (${strings.Current})` : strings.Small },
+    { key: FontSize.Medium, text: settings.fontSize === FontSize.Medium ? `${strings.Medium} (${strings.Current})` : strings.Medium },
+    { key: FontSize.Large, text: settings.fontSize === FontSize.Large ? `${strings.Large} (${strings.Current})` : strings.Large },
+    { key: FontSize.XLarge, text: settings.fontSize === FontSize.XLarge ? `Extra Large (${strings.Current})` : 'Extra Large' }
   ];
 
   const clickBehaviorOptions: IDropdownOption[] = [
@@ -245,9 +266,14 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
       styles.previewPill,
       settings.pillStyle === PillStyle.Square ? styles.square : '',
       settings.pillStyle === PillStyle.Minimal ? styles.minimal : '',
+      settings.pillStyle === PillStyle.Glass ? styles.glass : '',
+      settings.pillStyle === PillStyle.Filled ? styles.filled : '',
+      settings.pillStyle === PillStyle.Gradient ? styles.pillGradient : '',
+      settings.pillStyle === PillStyle.Neon ? styles.pillNeon : '',
       settings.density === Density.Compact ? styles.compact : 
         settings.density === Density.Spacious ? styles.spacious : ''
     ].filter(Boolean).join(' ');
+
 
     const previewContent = (() => {
       switch (mode) {
@@ -255,15 +281,15 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
           return (
             <div className={styles.previewContent}>
               <div className={pillClasses}>
-                {showIcons && settings.showIcons && '📊 '}SharePoint
+                {showIcons && settings.showIcons && <Icon iconName="SharepointLogo" styles={{ root: { marginRight: 8 } }} />}SharePoint
                 {settings.showBadges && <span className={styles.previewBadge}>New</span>}
               </div>
               <div className={pillClasses}>
-                {showIcons && settings.showIcons && '👥 '}Teams
+                {showIcons && settings.showIcons && <Icon iconName="TeamsLogo" styles={{ root: { marginRight: 8 } }} />}Teams
                 {settings.showBadges && <span className={styles.previewBadge}>Popular</span>}
               </div>
               <div className={pillClasses}>
-                {showIcons && settings.showIcons && '📝 '}OneNote
+                {showIcons && settings.showIcons && <Icon iconName="OneNoteLogo" styles={{ root: { marginRight: 8 } }} />}OneNote
               </div>
               {settings.maxVisibleItems < 5 && (
                 <div className={`${pillClasses} ${styles.showMorePill}`}>
@@ -276,13 +302,13 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
           return (
             <div className={styles.previewContent}>
               <div className={styles.previewDropdown}>
-                {showIcons && settings.showIcons && '🏢 '}HR Tools
+                {showIcons && settings.showIcons && <Icon iconName="FunctionalManagerDashboard" styles={{ root: { marginRight: 8 } }} />}HR Tools
               </div>
               <div className={styles.previewDropdown}>
-                {showIcons && settings.showIcons && '💻 '}IT Resources
+                {showIcons && settings.showIcons && <Icon iconName="Remote" styles={{ root: { marginRight: 8 } }} />}IT Resources
               </div>
               <div className={styles.previewDropdown}>
-                {showIcons && settings.showIcons && '📈 '}Business Apps
+                {showIcons && settings.showIcons && <Icon iconName="Market" styles={{ root: { marginRight: 8 } }} />}Business Apps
               </div>
             </div>
           );
@@ -290,10 +316,10 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
           return (
             <div className={styles.previewContent}>
               <div className={styles.previewDropdown}>
-                {showIcons && settings.showIcons && '🏢 '}Organization Links
+                {showIcons && settings.showIcons && <Icon iconName="CompanyDirectory" styles={{ root: { marginRight: 8 } }} />}Organization Links
               </div>
               <div className={styles.previewDropdown}>
-                {showIcons && settings.showIcons && '👤 '}Personal Links
+                {showIcons && settings.showIcons && <Icon iconName="Contact" styles={{ root: { marginRight: 8 } }} />}Personal Links
               </div>
             </div>
           );
@@ -313,18 +339,19 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
   const renderFullFooterPreview = () => (
     <div className={styles.fullFooterPreview}>
       <div className={styles.previewTitle}>Full Footer Preview</div>
-      <div className={styles.previewFooterContainer}>
+      <div className={`${styles.previewFooterContainer} ${settings.barLayout === BarLayout.FloatingDock ? styles.floatingDock : ''}`}>
         <div className={styles.previewLinksSection}>
           {renderDisplayModePreview(settings.displayMode, true).props.children[1]}
         </div>
         <div className={styles.previewActionsSection}>
-          <div className={styles.previewActionButton}>🔍</div>
-          <div className={styles.previewActionButton}>⚙️</div>
-          <div className={styles.previewActionButton}>👤</div>
+          <div className={styles.previewActionButton}><Icon iconName="Search" /></div>
+          <div className={styles.previewActionButton}><Icon iconName="Settings" /></div>
+          <div className={styles.previewActionButton}><Icon iconName="Contact" /></div>
         </div>
       </div>
     </div>
   );
+
 
   const renderDisplaySettings = () => (
     <Stack tokens={{ childrenGap: 16 }}>
@@ -363,13 +390,34 @@ export const UserSettingsPanel: React.FC<IUserSettingsPanelProps> = ({
       </Text>
 
       <Dropdown
+        label="Bar Layout"
+        options={barLayoutOptions}
+        selectedKey={settings.barLayout}
+        onChange={(_, option) => option && updateSetting('barLayout', option.key as BarLayout)}
+      />
+      <Text variant="small" className={styles.settingsDescription}>
+        Choose between a full-width bar or a floating dock style
+      </Text>
+
+      <Dropdown
         label="Bar Size"
+
         options={barSizeOptions}
         selectedKey={settings.barSize}
         onChange={(_, option) => option && updateSetting('barSize', option.key as BarSize)}
       />
       <Text variant="small" className={styles.settingsDescription}>
         Overall size of the footer bar
+      </Text>
+
+      <Dropdown
+        label="Font Size"
+        options={fontSizeOptions}
+        selectedKey={settings.fontSize}
+        onChange={(_, option) => option && updateSetting('fontSize', option.key as FontSize)}
+      />
+      <Text variant="small" className={styles.settingsDescription}>
+        Adjust the text size for links and menus
       </Text>
 
       <Dropdown

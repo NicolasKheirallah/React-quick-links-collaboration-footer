@@ -16,18 +16,32 @@ import { ICollabFooterProps } from './ICollabFooterProps';
 
 import { IContextualMenuItem } from '@fluentui/react/lib/ContextualMenu';
 import { getTheme } from '@fluentui/react/lib/Styling';
+import { useCategories } from '../../hooks/useCategories';
+import { useSafeTimeout } from '../../hooks/useSafeTimeout';
+import { useUserSettings } from '../../hooks/useUserSettings';
+import { useAdminStatus } from '../../hooks/useAdminStatus';
+import { useFooterData } from '../../hooks/useFooterData';
+import { CategoryService } from '../../services/categoryService';
 import { useToastNotifications } from '../../hooks/useToastNotifications';
 import { ToastContainer } from '../shared/ToastNotification';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { useUserAccess } from '../../hooks/useUserAccess';
 import { useAnalytics } from '../../hooks/useAnalytics';
-import { useCategories } from '../../hooks/useCategories';
-import { useSafeTimeout } from '../../hooks/useSafeTimeout';
-import { useUserSettings } from '../../hooks/useUserSettings';
-import { CategoryService } from '../../services/categoryService';
-import { ClickBehavior, SortOrder, BarSize } from '../../types/UserSettings';
-import { LinkManagementDialog } from '../dialogs/LinkManagementDialog';
+import { 
+  SortOrder, 
+  ClickBehavior,
+  FontSize,
+  BarSize 
+} from '../../types/UserSettings';
+// Lazy load the heavy LinkManagementDialog
+const LinkManagementDialog = React.lazy(() => 
+  import('../dialogs/LinkManagementDialog').then(module => ({ default: module.LinkManagementDialog }))
+);
+
+// ... (previous code)
+
 import { FooterActions } from './FooterActions';
 import { FooterNotifications } from './FooterNotifications';
 import { FooterSearch } from './FooterSearch';
@@ -73,9 +87,38 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
   legacyMode = false,
   onPersonalLinksUpdated
 }) => {
-  const [myLinks, setMyLinks] = useState<IContextualMenuItem[]>(initialMyLinks);
+  // 1. Hooks that don't depend on Footer Data
+  const userSettings = useUserSettings(context as any);
+  const analytics = useAnalytics(context as any, false);
+  const toast = useToastNotifications();
+
+  // 2. Footer Data Hook (needs userSettings)
+  const { 
+    myLinks, 
+    setMyLinks, 
+    organizationLinks, 
+    setOrganizationLinks, 
+    allAvailableOrgLinks, 
+    setAllAvailableOrgLinks,
+    recentLinks,
+    isLoading: isDataLoading,
+    refreshOrganizationLinks
+  } = useFooterData(
+    footerService, 
+    userSettings as any,
+    context?.pageContext?.user?.loginName || '',
+    initialMyLinks,
+    sharedLinks
+  );
+
+  // 3. Admin Status Hook
+  const { isAdmin } = useAdminStatus(context as any, homeSiteUrl);
+
+  // 4. User Access Hook (needs data from Footer Data Hook)
+  const userAccess = useUserAccess(context as any, organizationLinks, myLinks);
+
   const [myLinksSaved, setMyLinksSaved] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // For local actions
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showSearch, setShowSearch] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -86,8 +129,9 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [isResetConfirmDialogOpen, setIsResetConfirmDialogOpen] = useState<boolean>(false);
   const [showLinkManagementDialog, setShowLinkManagementDialog] = useState<boolean>(false);
+  const [hasLinkDialogOpened, setHasLinkDialogOpened] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('personal');
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  // isAdmin removed (handled by hook)
   const [showAddPersonalLinkForm, setShowAddPersonalLinkForm] = useState<boolean>(false);
   const [personalLinksSearchQuery, setPersonalLinksSearchQuery] = useState<string>('');
   const [personalLinksSortBy, setPersonalLinksSortBy] = useState<string>('name');
@@ -137,8 +181,8 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
     enableAnimations: true,
     bannerSize: 'medium'
   });
-  const [organizationLinks, setOrganizationLinks] = useState<IContextualMenuItem[]>(sharedLinks);
-  const [allAvailableOrgLinks, setAllAvailableOrgLinks] = useState<IContextualMenuItem[]>([]);
+  // organizationLinks removed (handled by hook)
+  // allAvailableOrgLinks removed (handled by hook)
   const [linkOperationStatus, setLinkOperationStatus] = useState<{
     isCreating: boolean;
     isUpdating: boolean;
@@ -151,10 +195,7 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
     lastOperation: null
   });
 
-  const userAccess = useUserAccess(context as any, organizationLinks, myLinks);
-  const analytics = useAnalytics(context as any, false);
-  const toast = useToastNotifications();
-  const userSettings = useUserSettings(context as any);
+  // Existing hooks removed from here as they are moved up
   
   const allLinks = useMemo(() => [...organizationLinks, ...myLinks], [organizationLinks, myLinks]);
   const categories = useCategories(context as any, allLinks);
@@ -183,7 +224,10 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
 
   const handleLinkClickWithAnalytics = useCallback(async (link: IContextualMenuItem, event?: React.MouseEvent) => {
     try {
-      await analytics.trackLinkClick(link);
+    // Track analytics if enabled
+    if (userSettings.settings.enableAnalytics) {
+      analytics.trackLinkClick(link);
+    }
       
       if (link.href && !event?.defaultPrevented) {
         if (userSettings.settings.clickBehavior === ClickBehavior.SameTab) {
@@ -247,11 +291,13 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
       }
       
       if (successCount > 0) {
-        toast.showSuccess(`Successfully imported ${successCount} links to SharePoint list!`);
+        toast.showSuccess(strings.ImportedLinksSuccess.replace('{0}', successCount.toString()));
+        // Refresh data
+        await refreshOrganizationLinks();
       }
       
       if (failureCount > 0) {
-        toast.showWarning(`${failureCount} links failed to import. Please check the console for details.`);
+        toast.showWarning(strings.ImportedLinksFailure.replace('{0}', failureCount.toString()));
       }
       
       Log.info(LOG_SOURCE, `Import completed: ${successCount} links saved to SharePoint, ${failureCount} failed`);
@@ -264,7 +310,7 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
     } finally {
       setLinkOperationStatus(prev => ({ ...prev, isCreating: false }));
     }
-  }, [footerService, toast]);
+  }, [footerService, toast, refreshOrganizationLinks]);
 
   const handleStatusUpdate = useCallback((message: string, isError = false) => {
     Log.info(LOG_SOURCE, `Admin status: ${message}`);
@@ -273,20 +319,6 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
       lastOperation: message 
     }));
   }, []);
-
-  const handleCreateCategory = useCallback(async (categoryName: string): Promise<boolean> => {
-    try {
-      Log.info(LOG_SOURCE, `Creating new category: ${categoryName}`);
-      const newCategory = await CategoryService.createCategory({ name: categoryName }, context as any);
-      Log.info(LOG_SOURCE, `Successfully created category: ${categoryName} with ID: ${newCategory.id}`);
-      toast.showSuccess(`Category "${categoryName}" created successfully!`);
-      return true;
-    } catch (error) {
-      Log.error(LOG_SOURCE, error as Error);
-      toast.showError(`Failed to create category: ${(error as Error).message}`);
-      return false;
-    }
-  }, [context, toast]);
 
   const handleCategoriesRefresh = useCallback(async () => {
     Log.info(LOG_SOURCE, 'Refreshing categories after creation');
@@ -302,6 +334,21 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
     await new Promise(resolve => setTimeout(resolve, 150));
   }, [categories, context]);
 
+  const handleCreateCategory = useCallback(async (categoryName: string): Promise<boolean> => {
+    try {
+      Log.info(LOG_SOURCE, `Creating new category: ${categoryName}`);
+      const newCategory = await CategoryService.createCategory({ name: categoryName }, context as any);
+      Log.info(LOG_SOURCE, `Successfully created category: ${categoryName} with ID: ${newCategory.id}`);
+      await handleCategoriesRefresh();
+      toast.showSuccess(strings.CategoryCreatedSuccess.replace('{0}', categoryName));
+      return true;
+    } catch (error) {
+      console.error('Error creating category:', error);
+      toast.showError(strings.CategoryCreationFailure.replace('{0}', (error as Error).message));
+      return false;
+    }
+  }, [context, toast, handleCategoriesRefresh]);
+
 
 
 
@@ -311,6 +358,7 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
 
   useEffect(() => {
     if (legacyMode && !showLinkManagementDialog) {
+      setHasLinkDialogOpened(true);
       setShowLinkManagementDialog(true);
       setActiveTab('personal');
     }
@@ -327,164 +375,22 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
   }, [myLinks, legacyMode, onPersonalLinksUpdated]);
 
   useEffect(() => {
-    checkAdminStatus();
-    loadRealData();
-    validateSharePointListsSilent(); // Use silent version for automatic validation
+    // Initial data load handled by useFooterData
+    
+    // Validate lists silently
+    validateSharePointListsSilent(); 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // Only run on mount
 
   useEffect(() => {
     setOrganizationLinks(sharedLinks);
   }, [sharedLinks]);
 
-  const checkAdminStatus = useCallback(async () => {
-    try {
-      if (!context) {
-        Log.warn(LOG_SOURCE, 'Context not available for admin check');
-        return;
-      }
+  /* checkAdminStatus removed (handled by hook) */
 
-      const isSiteAdmin = context.pageContext.user?.isAnonymousGuestUser === false &&
-                         context.pageContext.legacyPageContext?.isSiteAdmin === true;
-      
-      let isOnHomeSite = true; // Default to true if no homeSiteUrl specified
-      if (homeSiteUrl) {
-        const currentSiteUrl = context.pageContext.web.absoluteUrl.toLowerCase();
-        const normalizedHomeSiteUrl = homeSiteUrl.toLowerCase().replace(/\/+$/, ''); // Remove trailing slashes
-        const normalizedCurrentSiteUrl = currentSiteUrl.replace(/\/+$/, ''); // Remove trailing slashes
-        isOnHomeSite = normalizedCurrentSiteUrl === normalizedHomeSiteUrl || normalizedCurrentSiteUrl.startsWith(normalizedHomeSiteUrl + '/');
-      }
-      
-      const isHomeSiteAdmin = isSiteAdmin && isOnHomeSite;
-      setIsAdmin(!!isHomeSiteAdmin);
-      
-      Log.info(LOG_SOURCE, `Admin status check: isSiteAdmin=${isSiteAdmin}, isOnHomeSite=${isOnHomeSite}, homeSiteUrl=${homeSiteUrl}, currentSite=${context.pageContext.web.absoluteUrl}`);
-      Log.info(LOG_SOURCE, `Final admin status: ${isHomeSiteAdmin}`);
-    } catch (error) {
-      Log.warn(LOG_SOURCE, `Error checking admin status: ${(error as Error).message}`);
-      setIsAdmin(false);
-    }
-  }, [context, homeSiteUrl]);
+  /* refreshOrganizationLinks removed (handled by hook) */
 
-  const refreshOrganizationLinks = useCallback(async () => {
-    try {
-      if (!footerService) {
-        Log.warn(LOG_SOURCE, 'Footer service not available for refresh');
-        return;
-      }
-
-      Log.info(LOG_SOURCE, 'Refreshing organization links from server after deletion');
-
-      const sharedLinks = await footerService.getSharedLinks();
-      const sharedMenuItems = sharedLinks.map(link => ({
-        key: `shared-${link.id}`,
-        name: link.title,
-        href: link.url,
-        title: link.description,
-        iconProps: { iconName: link.iconName || 'Link' },
-        target: userSettings.settings.clickBehavior === ClickBehavior.SameTab ? '_self' : '_blank',
-        isActive: link.isActive,
-        data: {
-          iconUrl: link.iconUrl,
-          isMandatory: (link as any).isMandatory || false,
-          category: (link as any).category || 'General',
-          id: link.id
-        }
-      }));
-      setOrganizationLinks(sharedMenuItems);
-
-      if ('getAllGlobalLinks' in footerService) {
-        const allGlobalLinks = await (footerService as any).getAllGlobalLinks();
-        const allOrgMenuItems = allGlobalLinks.map((link: any) => ({
-          key: `global-${link.id}`,
-          name: link.title,
-          href: link.url,
-          title: link.description,
-          iconProps: { iconName: link.iconName || 'Link' },
-          target: userSettings.settings.clickBehavior === ClickBehavior.SameTab ? '_self' : '_blank',
-          isActive: link.isActive,
-          data: {
-            iconUrl: link.iconUrl,
-            isMandatory: link.isMandatory || false,
-            category: link.category || 'General',
-            id: link.id
-          }
-        }));
-        setAllAvailableOrgLinks(allOrgMenuItems);
-        Log.info(LOG_SOURCE, `Refreshed ${allOrgMenuItems.length} organization links from server`);
-      }
-    } catch (error) {
-      Log.error(LOG_SOURCE, error as Error);
-    }
-  }, [footerService, userSettings.settings.clickBehavior]);
-
-  const loadRealData = useCallback(async () => {
-    try {
-      if (!footerService) {
-        Log.warn(LOG_SOURCE, 'Footer service not available');
-        return;
-      }
-
-      setIsLoading(true);
-
-      const personalLinks = await footerService.getPersonalLinks();
-      const personalMenuItems = personalLinks.map((link, index) => ({
-        key: `personal-${link.id || `generated-${Date.now()}-${index}`}`,
-        name: link.title,
-        href: link.url,
-        title: link.description,
-        iconProps: { iconName: link.iconName || 'Link' },
-        target: userSettings.settings.clickBehavior === ClickBehavior.SameTab ? '_self' : '_blank',
-        data: {
-          iconUrl: (link as any).iconUrl
-        }
-      }));
-      setMyLinks(personalMenuItems);
-
-      const sharedLinks = await footerService.getSharedLinks();
-      const sharedMenuItems = sharedLinks.map(link => ({
-        key: `shared-${link.id}`,
-        name: link.title,
-        href: link.url,
-        title: link.description,
-        iconProps: { iconName: link.iconName || 'Link' },
-        target: userSettings.settings.clickBehavior === ClickBehavior.SameTab ? '_self' : '_blank',
-        isActive: link.isActive,
-        data: {
-          iconUrl: link.iconUrl,
-          isMandatory: (link as any).isMandatory || false,
-          category: (link as any).category || 'General'
-        }
-      }));
-      setOrganizationLinks(sharedMenuItems);
-
-      if ('getAllGlobalLinks' in footerService) {
-        const allGlobalLinks = await (footerService as any).getAllGlobalLinks();
-        const allOrgMenuItems = allGlobalLinks.map((link: any) => ({
-          key: `global-${link.id}`,
-          name: link.title,
-          href: link.url,
-          title: link.description,
-          iconProps: { iconName: link.iconName || 'Link' },
-          target: userSettings.settings.clickBehavior === ClickBehavior.SameTab ? '_self' : '_blank',
-          isActive: link.isActive,
-          data: {
-            iconUrl: link.iconUrl,
-            isMandatory: link.isMandatory || false,
-            category: link.category || 'General',
-            id: link.id
-          }
-        }));
-        setAllAvailableOrgLinks(allOrgMenuItems);
-      }
-
-      Log.info(LOG_SOURCE, `Loaded ${personalLinks.length} personal links and ${sharedLinks.length} organization links`);
-    } catch (error) {
-      Log.warn(LOG_SOURCE, `Error loading data: ${(error as Error).message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [footerService]);
+  /* loadRealData removed (handled by hook) */
 
 
   const validateSharePointListsSilent = useCallback(async () => {
@@ -530,15 +436,15 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
       
       const results = [];
       if (globalLinksExists) {
-        results.push('✓ Global Links List');
+        results.push(strings.GlobalLinksListFound);
       } else {
-        results.push('✗ Global Links List (Missing)');
+        results.push(strings.GlobalLinksListMissing);
       }
       
       if (userSelectionsExists) {
-        results.push('✓ User Selections List');
+        results.push(strings.UserSelectionsListFound);
       } else {
-        results.push('✗ User Selections List (Missing)');
+        results.push(strings.UserSelectionsListMissing);
       }
       
       const allListsExist = globalLinksExists && userSelectionsExists;
@@ -1183,7 +1089,9 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
     }
   }, [newLinkFormData.title, newLinkFormData.url, newLinkFormData.description, newLinkFormData.iconName, newLinkFormData.iconUrl, newLinkFormData.category, newLinkFormData.isMandatory, newLinkFormData.targetUsers, newLinkFormData.validFrom, newLinkFormData.validTo, newLinkFormData.id, footerService, organizationLinks, isValidUrl, userSettings.settings.clickBehavior]);
 
-  const handleUnifiedLinkManagement = useCallback(() => {
+  const handleUnifiedLinkManagement = useCallback((tab: string = 'personal') => {
+    setActiveTab(tab);
+    setHasLinkDialogOpened(true);
     setShowLinkManagementDialog(true);
   }, []);
 
@@ -1208,15 +1116,24 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
 
   const filteredAllLinks = useMemo(() => {
     if (!searchQuery.trim()) return [];
+
+    let linksToSearch = allLinks;
+    // If global search is disabled, only search within the selected category (if one is selected)
+    if (!userSettings.settings.enableGlobalSearch && selectedCategory !== 'all') {
+      linksToSearch = allLinks.filter(link => {
+         const cat = (link.data as any)?.category || 'General';
+         return cat.toLowerCase() === selectedCategory.toLowerCase();
+      });
+    }
     
     const query = searchQuery.toLowerCase();
     
-    return allLinks.filter(link => 
+    return linksToSearch.filter(link => 
       link.name?.toLowerCase().includes(query) || 
       (link as any).description?.toLowerCase().includes(query) ||
       (link as any).category?.toLowerCase().includes(query)
     );
-  }, [allLinks, searchQuery]);
+  }, [allLinks, searchQuery, selectedCategory, userSettings.settings.enableGlobalSearch]);
 
   const availableCategories = useMemo(() => {
     if (categories.categoryOptions.length > 0) {
@@ -1315,20 +1232,27 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
   }, []);
 
 
-  const getBannerSizeClass = () => {
-    switch (adminSettings.bannerSize) {
-      case 'small': return styles.bannerSmall;
-      case 'large': return styles.bannerLarge;
-      default: return '';
-    }
-  };
-
   const getBarSizeClass = () => {
     switch (userSettings.settings.barSize) {
       case BarSize.Small: return styles.barSizeSmall;
       case BarSize.Large: return styles.barSizeLarge;
       default: return styles.barSizeMedium;
     }
+  };
+
+  const getFontSizeClass = () => {
+    const s = styles as any;
+    switch (userSettings.settings.fontSize) {
+      case FontSize.Small: return s.fontSizeSmall;
+      case FontSize.Large: return s.fontSizeLarge;
+      case FontSize.XLarge: return s.fontSizeXLarge;
+      default: return s.fontSizeMedium;
+    }
+  };
+
+  const getLayoutClass = () => {
+    const layout = userSettings.settings.barLayout === 'floating-dock' ? (styles as any).floatingDock : '';
+    return layout;
   };
 
   const renderLinkBadge = (link: IContextualMenuItem): React.ReactNode => {
@@ -1400,7 +1324,7 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
   }, [userAccess.filteredOrganizationLinks, myLinks]);
 
   return (
-    <footer className={`${styles.modernFooter} ${getBannerSizeClass()} ${getBarSizeClass()}`} role="contentinfo" aria-label="Collaboration footer">
+    <footer className={`${styles.modernFooter} ${getBarSizeClass()} ${getLayoutClass()} ${getFontSizeClass()}`} role="contentinfo" aria-label="Collaboration footer">
       <div className={styles.footerContainer}>
         <FooterNotifications
           myLinksSaved={myLinksSaved}
@@ -1424,8 +1348,9 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
                 allLinksToDisplay={filteredLinksByCategory}
                 handleLinkClick={handleLinkClickWithAnalytics}
                 renderLinkBadge={renderLinkBadge}
-                isLoading={isLoading}
-                userSettings={userSettings.settings}
+              isLoading={isDataLoading}
+              userSettings={userSettings.settings}
+              recentLinks={recentLinks}
               />
             )}
           </div>
@@ -1446,8 +1371,10 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
           </div>
         </div>
 
-        <LinkManagementDialog
-          isOpen={showLinkManagementDialog}
+        {(hasLinkDialogOpened || showLinkManagementDialog) && (
+          <React.Suspense fallback={<div className={styles.spinnerContainer}><Spinner size={SpinnerSize.large} label={strings.Loading} /></div>}>
+            <LinkManagementDialog
+              isOpen={showLinkManagementDialog}
           onClose={closeLinkManagementDialog}
           context={context as any}
           activeTab={activeTab}
@@ -1526,10 +1453,12 @@ const ModernCollabFooter: React.FC<ICollabFooterProps> = ({
           
           footerService={footerService}
           onRefreshOrganizationLinks={refreshOrganizationLinks}
-          
-          onCreateCategory={handleCreateCategory}
-          onCategoriesRefresh={handleCategoriesRefresh}
-        />
+              // Category management
+              onCreateCategory={handleCreateCategory}
+              onCategoriesRefresh={handleCategoriesRefresh}
+            />
+          </React.Suspense>
+        )}
 
         {/* Reset Confirmation Dialog */}
         <Dialog

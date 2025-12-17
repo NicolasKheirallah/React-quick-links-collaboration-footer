@@ -127,6 +127,46 @@
         text-decoration: underline;
       }
       
+      &.glass {
+        background: rgba(255, 255, 255, 0.7) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      &.filled {
+        background: $ms-color-themePrimary !important;
+        color: white !important;
+        border: none !important;
+        
+        // Ensure child elements inherit white color in preview
+        * {
+          color: white !important;
+        }
+      }
+
+      &.pillGradient {
+        background: linear-gradient(135deg, $ms-color-themePrimary, #00a4ef);
+        color: white;
+        border: none;
+        
+        &:hover {
+          box-shadow: 0 2px 8px rgba(0, 120, 212, 0.4);
+        }
+      }
+
+      &.pillNeon {
+        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid #00ff00;
+        color: #00ff00;
+        box-shadow: 0 0 5px #00ff00;
+        
+        &:hover {
+          box-shadow: 0 0 10px #00ff00;
+        }
+      }
+
+      
       &.compact {
         padding: 1px 4px;
         font-size: 9px;
@@ -201,6 +241,14 @@
     border-radius: 6px;
     padding: 12px 16px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    &.floatingDock {
+      margin: 0 auto;
+      max-width: 80%;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
     
     .previewLinksSection {
       flex: 1;
